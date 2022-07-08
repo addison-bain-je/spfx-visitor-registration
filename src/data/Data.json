@@ -1,0 +1,88 @@
+{
+    "RequestNo": "A004874",
+    "Status": "Ready",
+    "ApplicantContactNumber": "2256",
+    "VisitorDetails": [
+        {
+           "CompanyName": "NV automonlie",
+           "CustCode": "NA",
+           "Salutation": "-",
+           "GuestName": "JiaTian Chen",
+           "JobTitle": "Sales Manager"
+        },
+        {
+            "CompanyName": "NV automonlie",
+            "CustCode": "NA",
+            "Salutation": "-",
+            "GuestName": "DaPeng Zhao",
+            "JobTitle": "General Manager"
+         },
+         {
+            "CompanyName": "NV automonlie",
+            "CustCode": "NA",
+            "Salutation": "-",
+            "GuestName": "YuZhao Wu",
+            "JobTitle": "Engineer Manager"
+         }
+
+    ],
+    "BU": "03. APG-BI",
+    "SalesRegion": "North & Central China",
+    "VisitorType": "Customer",
+    "SubVisitorType": "General Visit",
+    "VisitPurpose": "New business normal visit",
+    "MotorSeries": "KC335MSG",
+    "Application": "Washer Pump",
+    "HostDetails": [
+        {
+            "JohnsonHostName": "Pual Tsui",
+            "Department": "Business Development Manager",
+            "ExtNo": "2029",
+            "MobileNo":"1365558888"
+        },
+        {
+            "JohnsonHostName": "ZhongPing Wu",
+            "Department": "Engineer Manager",
+            "ExtNo": "2029",
+            "MobileNo":"1365566666"
+        }
+    ],
+    "TourPlan": [
+        {
+            "Date": "2020/08/04",
+            "Time": "13:00 - 19:30",
+            "VisitArea": "VIP Center",
+            "PlantCode": "106",
+            "Block": "11",
+            "Floor": "3",
+            "Torguide": "Jie Li/CHN/JEHL",
+            "ExtNo": "3118",
+            "NobileNo": "18566230000",
+            "LocalApprover": "DanDan Song"
+        },
+        {
+            "Date": "2020/08/04",
+            "Time": "15:30 - 16:00",
+            "VisitArea": "Marketing Showroom for APG",
+            "PlantCode": "106",
+            "Block": "11",
+            "Floor": "1",
+            "Torguide": "Roy xl Luo/CHN/JEHL",
+            "ExtNo": "816-2362",
+            "NobileNo": "13725500600",
+            "LocalApprover": "Roy xl Luo"
+        },
+        {
+            "Date": "2020/08/04",
+            "Time": "16:00 - 16:30",
+            "VisitArea": "Test Lab -- Automotive Products",
+            "PlantCode": "106",
+            "Block": "16",
+            "Floor": "5",
+            "Torguide": "BoWei Liu/CHN/JEHL",
+            "ExtNo": "816-2348",
+            "NobileNo": "15814730000",
+            "LocalApprover": "Roy xl Luo"
+        }
+    ]
+}
