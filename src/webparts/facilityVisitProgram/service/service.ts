@@ -6,7 +6,8 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { PageContext } from '@microsoft/sp-page-context';
 
 export class service {
-    constructor(context: WebPartContext, mypagecontext: PageContext) {
+    //constructor(context: WebPartContext, mypagecontext: PageContext) {
+    constructor(context: WebPartContext) {
         sp.setup({
             spfxContext: context,
             sp: {

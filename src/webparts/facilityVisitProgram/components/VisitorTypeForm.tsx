@@ -39,7 +39,7 @@ class VisitorTypeForm extends React.Component<FormProps> {
     constructor(props: FormProps) {
         super(props);
         this.initialValues = this.props.formInitialValues;
-        this._service = new service(this.props.context, this.props.context.pageContext);
+        this._service = new service(this.props.context);
     }
 
     private onSubmit = (values, { setSubmitting, resetForm }) => {

@@ -38,7 +38,7 @@ class MotorSeriesForm extends React.Component<MotorSeriesFormProps> {
     constructor(props: MotorSeriesFormProps) {
         super(props);
         this.initialValues = this.props.formInitialValues;
-        this._service = new service(this.props.context, this.props.context.pageContext);
+        this._service = new service(this.props.context);
     }
 
     private onSubmit = (values, { setSubmitting, resetForm }) => {

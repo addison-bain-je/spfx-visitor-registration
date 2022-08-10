@@ -73,7 +73,7 @@ class SubVisitorTypeDataTable extends React.Component<IProps, IDataTableState>{
             },
 
         };
-        this._service = new service(props.context, props.context.pageContext);
+        this._service = new service(props.context);
         this._selection = [];
         this.viewFields = [
             {

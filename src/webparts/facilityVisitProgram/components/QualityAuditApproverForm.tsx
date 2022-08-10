@@ -6,7 +6,7 @@ import { service } from '../service/service';
 import { createStyles, Theme } from "@material-ui/core/styles";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import { QualityAuditApproverItem, SelectOptionItem } from './ItemDefine';
+import { QualityAuditApproverItem, SelectOptionItem, KeywordItem } from './ItemDefine';
 import MuiFormControl from "@material-ui/core/FormControl";
 import { PeoplePicker, PrincipalType } from "@pnp/spfx-controls-react/lib/PeoplePicker";
 import Controls from './controls/Controls';
@@ -27,7 +27,8 @@ interface FormProps {
     refreshData: any;
     classes?: any;
     editForm: boolean;
-    SubVisitorTypeOptions: SelectOptionItem[];
+    //SubVisitorTypeOptions: SelectOptionItem[];
+    Keywords: KeywordItem[];
 }
 
 const validationSchema =
@@ -42,7 +43,7 @@ class QualityAuditApproverForm extends React.Component<FormProps> {
     constructor(props: FormProps) {
         super(props);
         this.initialValues = this.props.formInitialValues;
-        this._service = new service(this.props.context, this.props.context.pageContext);
+        this._service = new service(this.props.context);
     }
 
     private onSubmit = (values, { setSubmitting, resetForm }) => {
@@ -62,9 +63,26 @@ class QualityAuditApproverForm extends React.Component<FormProps> {
             this.props.closeForm();
         }, 1000);
     }
+    private FilterKeywords(FieldName: string): SelectOptionItem[] {
+        //private FilterKeywords(FieldName: string): SelectSpecialOptionItem[] {
+        var v: SelectOptionItem[] = [];
+        //var v: SelectSpecialOptionItem[] = [];
+        var kItem: KeywordItem[] = [];
+        if (FieldName != '') {
+            kItem = this.props.Keywords.filter(obj => obj.Key == FieldName);
+            if (kItem.length > 0) {
+                JSON.parse(kItem[0].Values).map((item: { Value: any; }) => {
+                    v.push({
+                        id: item.Value,
+                        title: item.Value,
+                    });
+                });
+            }
+        }
+        return (v);
+    }
 
     public render() {
-
         const { classes } = this.props;
         return (
             <>
@@ -80,23 +98,20 @@ class QualityAuditApproverForm extends React.Component<FormProps> {
                                     <Grid item xs={12} sm={12}>
                                         <Controls.Select
                                             name="QualityAuditType"
-                                            label="Quality Audit Type"
+                                            label="Visiting Purpose"
                                             value={values.QualityAuditType}
-                                            options={this.props.SubVisitorTypeOptions}
+                                            options={this.FilterKeywords("Visiting Purpose")}
                                             onChange={handleChange}
                                             error={errors.QualityAuditType && touched.QualityAuditType
                                                 ? errors.QualityAuditType
                                                 : null}
                                             disabled={!this.props.editForm}
                                         />
-
-
                                         <MuiFormControl
                                             variant="outlined"
                                             error={errors.AuditApprover != null}
                                             margin='dense'
                                             size='medium'
-
                                         >
                                             <FormLabel>Quality Audit Approver</FormLabel>
                                             <PeoplePicker

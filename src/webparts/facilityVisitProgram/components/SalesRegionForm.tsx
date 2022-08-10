@@ -39,7 +39,7 @@ class SalesRegionForm extends React.Component<SalesRegionServiceFormProps> {
     constructor(props: SalesRegionServiceFormProps) {
         super(props);
         this.initialValues = this.props.formInitialValues;
-        this._service = new service(this.props.context, this.props.context.pageContext);
+        this._service = new service(this.props.context);
     }
 
     private onSubmit = (values, { setSubmitting, resetForm }) => {

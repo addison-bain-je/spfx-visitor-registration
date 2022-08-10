@@ -7,7 +7,7 @@ import PeopleOutlineTwoToneIcon from '@material-ui/icons/PeopleOutlineTwoTone';
 import PageHeader from './PageHeader';
 import { Formik, Field } from 'formik';
 import { fvpService } from '../service/fvpService';
-import { fvpItem, SelectOptionItem, FinalApproverItem } from './ItemDefine';
+import { fvpItem, SelectOptionItem, FinalApproverItem, KeywordItem } from './ItemDefine';
 import _MaterialTable from './_MaterialTable';
 import _MaterialTable_Read from './_MaterialTable_Read';
 import { createStyles, Theme } from "@material-ui/core/styles";
@@ -129,10 +129,10 @@ const validationSchema =
         SalesRegion: Yup.string().required("required").nullable(),
         VisitorType: Yup.string()
             .required('required').nullable(),
-        VisitorTypeDescription: Yup.string()
-            .required('required').nullable(),
-        VisitingPurpose: Yup.string().when('VisitorTypeDescription', {
-            is: 'Customer',
+        // VisitorTypeDescription: Yup.string()
+        //     .required('required').nullable(),
+        VisitingPurpose: Yup.string().when('VisitorType', {
+            is: 'BU Customer',
             then: Yup.string().required('required').nullable(),
             otherwise: Yup.string().notRequired().nullable(),
         }),
@@ -224,12 +224,32 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
     private handleOK = () => {
         this.setState({ openAlert: false });
     }
+
+    private FilterKeywords(FieldName: string): SelectOptionItem[] {
+        //private FilterKeywords(FieldName: string): SelectSpecialOptionItem[] {
+        var v: SelectOptionItem[] = [];
+        //var v: SelectSpecialOptionItem[] = [];
+        var kItem: KeywordItem[] = [];
+        if (FieldName != '') {
+            kItem = this.props.keywords.filter(obj => obj.Key == FieldName);
+            if (kItem.length > 0) {
+                JSON.parse(kItem[0].Values).map((item: { Value: any; }) => {
+                    v.push({
+                        id: item.Value,
+                        title: item.Value,
+                    });
+                });
+            }
+        }
+        return (v);
+    }
+
     private onSubmit = (values, { setSubmitting, resetForm }) => {
 
         if (confirm("Are you sure to submit?")) {
 
             setTimeout(() => {
-                values.MarketingCoordinator = this.props.MarketingCoordinator;
+                values.MarketingCoordinator = this.FilterKeywords("Marketing Coordinator");
                 values.Action = "submit";
                 console.log(JSON.stringify(values, null, 2));
                 //values.SubmittedDate = new Date().toLocaleString();
@@ -321,20 +341,20 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
         }
     }
 
-    private FilterFinalApproverOptions(VisitorType: string): SelectOptionItem[] {
-        var v: SelectOptionItem[] = [];
-        var v1: FinalApproverItem[] = [];
-        if (VisitorType != '') {
-            v1 = this.props.FinalApproverOptions.filter(obj => obj.VisitorType == VisitorType);
-            v1.map((item) => {
-                v.push({
-                    id: String(item.ID),
-                    title: item.FinalApprover,
-                });
-            });
-        }
-        return (v);
-    }
+    // private FilterFinalApproverOptions(VisitorType: string): SelectOptionItem[] {
+    //     var v: SelectOptionItem[] = [];
+    //     var v1: FinalApproverItem[] = [];
+    //     if (VisitorType != '') {
+    //         v1 = this.props.FinalApproverOptions.filter(obj => obj.VisitorType == VisitorType);
+    //         v1.map((item) => {
+    //             v.push({
+    //                 id: String(item.ID),
+    //                 title: item.FinalApprover,
+    //             });
+    //         });
+    //     }
+    //     return (v);
+    // }
 
     public render() {
         const { classes } = this.props;
@@ -465,60 +485,81 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                 label={"Applicant"}
                                                 className={classes.controlLabel}
                                             />
-                                            <FormControlLabel
-                                                control={<Field
-                                                    name="BU">
-                                                    {(fieldProps) => {
-                                                        return (
-                                                            <Controls.MultipleSelect
-                                                                fieldName="BU"
-                                                                //label="Business Unit"
-                                                                setFieldValue={fieldProps.form.setFieldValue}
-                                                                dname="BUDescription"
-                                                                fieldValue={initializeValues(fieldProps.field.value)}
-                                                                options={this.props.BUOptions}
-                                                                //onChange={formik.handleChange}
-                                                                error={formik.errors.BU && formik.touched.BU
-                                                                    ? formik.errors.BU
-                                                                    : null}
-                                                                disabled={!this.props.editForm}
-                                                            />
-                                                        );
-                                                    }}
-
-                                                </Field>}
-                                                labelPlacement="start"
-                                                label={"Business Unit"}
-                                                className={classes.controlLabel}
-
-                                            />
-
-                                            <FormControlLabel
-                                                control={<Field
-                                                    name="BUSegment">
-                                                    {(fieldProps) => {
-                                                        return (
-                                                            <Controls.MultipleSelect
-                                                                fieldName="BUSegment"
-                                                                //label="BU Segment"
-                                                                setFieldValue={fieldProps.form.setFieldValue}
-                                                                dname="BUSegmentDescription"
-                                                                fieldValue={initializeValues(fieldProps.field.value)}
-                                                                options={this.props.BUSegmentOptions}
-                                                                //onChange={formik.handleChange}
-                                                                error={formik.errors.BUSegment && formik.touched.BUSegment
-                                                                    ? formik.errors.BUSegment
-                                                                    : null}
-                                                                disabled={!this.props.editForm}
-                                                            />
-                                                        );
-                                                    }}
-
-                                                </Field>}
-                                                labelPlacement="start"
-                                                label={"BU Segment"}
-                                                className={classes.controlLabel}
-                                            />
+                                            <Tooltip title={formik.values.BU ? JSON.parse(formik.values.BU).join(',') : "Empty"} arrow placement="right">
+                                                <div>
+                                                    <FormControlLabel
+                                                        disabled={!this.props.editForm}
+                                                        control={
+                                                            <Field
+                                                                name="BU">
+                                                                {(fieldProps) => {
+                                                                    return (
+                                                                        <Controls.MultipleSelect
+                                                                            fieldName="BU"
+                                                                            //label="Business Unit"
+                                                                            setFieldValue={fieldProps.form.setFieldValue}
+                                                                            ////dname="BUDescription"
+                                                                            fieldValue={initializeValues(fieldProps.field.value)}
+                                                                            options={this.FilterKeywords('Business Unit')}
+                                                                            //onChange={formik.handleChange}
+                                                                            error={formik.errors.BU && formik.touched.BU
+                                                                                ? formik.errors.BU
+                                                                                : null}
+                                                                            disabled={!this.props.editForm}
+                                                                        />
+                                                                    );
+                                                                }}
+                                                            </Field>
+                                                        }
+                                                        labelPlacement="start"
+                                                        label={"Business Unit"}
+                                                        className={classes.controlLabel}
+                                                    />
+                                                </div>
+                                            </Tooltip>
+                                            {/* 
+                                            <Controls.Select
+                                                name="PickFrom"
+                                                label="Pick up from"
+                                                value={formik.values.PickFrom}
+                                                options={this.FilterKeywords('PickFrom')}
+                                                onChange={formik.handleChange}
+                                                setFieldValue={formik.setFieldValue}
+                                                error={formik.errors.PickFrom && formik.touched.PickFrom
+                                                    ? formik.errors.PickFrom
+                                                    : null}
+                                                disabled={!this.props.editForm}
+                                            /> */}
+                                            <Tooltip title={formik.values.BUSegment ? JSON.parse(formik.values.BUSegment).join(',') : "Empty"} arrow placement="right">
+                                                <div>
+                                                    <FormControlLabel
+                                                        disabled={!this.props.editForm}
+                                                        control={<Field
+                                                            name="BUSegment">
+                                                            {(fieldProps) => {
+                                                                return (
+                                                                    <Controls.MultipleSelect
+                                                                        fieldName="BUSegment"
+                                                                        //label="BU Segment"
+                                                                        setFieldValue={fieldProps.form.setFieldValue}
+                                                                        ////dname="BUSegmentDescription"
+                                                                        fieldValue={initializeValues(fieldProps.field.value)}
+                                                                        options={this.FilterKeywords('BU Segment')}
+                                                                        //onChange={formik.handleChange}
+                                                                        error={formik.errors.BUSegment && formik.touched.BUSegment
+                                                                            ? formik.errors.BUSegment
+                                                                            : null}
+                                                                        disabled={!this.props.editForm}
+                                                                    />
+                                                                );
+                                                            }}
+                                                        </Field>}
+                                                        labelPlacement="start"
+                                                        label={"BU Segment"}
+                                                        className={classes.controlLabel}
+                                                    />
+                                                </div>
+                                            </Tooltip>
 
                                             <Paper variant='outlined' elevation={1}>
 
@@ -527,10 +568,10 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                         name="VisitorType"
                                                         //label="Visitor Type"
                                                         value={formik.values.VisitorType}
-                                                        options={this.props.VisitorTypeOptions}
-                                                        onChange={(e) => { formik.handleChange(e); formik.setFieldValue("VisitingPurpose", ""); formik.setFieldValue("VisitingPurposeDescription", ""); }}
+                                                        options={this.FilterKeywords('Visitor Type')}
+                                                        onChange={(e) => { formik.handleChange(e); formik.setFieldValue("VisitingPurpose", ""); }}
                                                         setFieldValue={formik.setFieldValue}
-                                                        dname="VisitorTypeDescription"
+                                                        //dname="VisitorTypeDescription"
                                                         error={formik.errors.VisitorType && formik.touched.VisitorType
                                                             ? formik.errors.VisitorType
                                                             : null}
@@ -546,49 +587,50 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                         name="VisitingPurpose"
                                                         //label="Visiting Purpose"
                                                         value={formik.values.VisitingPurpose}
-                                                        options={this.props.VisitingPurposeOptions}
+                                                        options={this.FilterKeywords('Visiting Purpose')}
                                                         onChange={formik.handleChange}
                                                         setFieldValue={formik.setFieldValue}
-                                                        dname="VisitingPurposeDescription"
+                                                        //dname="VisitingPurposeDescription"
                                                         error={formik.errors.VisitingPurpose && formik.touched.VisitingPurpose
                                                             ? formik.errors.VisitingPurpose
                                                             : null}
-                                                        disabled={!this.props.editForm || formik.values.VisitorTypeDescription != 'Customer'}
+                                                        disabled={!this.props.editForm || formik.values.VisitorType != 'BU Customer'}
                                                     />}
                                                     labelPlacement="start"
                                                     label={"Visiting Purpose"}
                                                     className={classes.controlLabel}
                                                 />
                                                 <Grid item>
-                                                    <FormControlLabel
-                                                        control={<Grid item>
-                                                            <Tooltip title='Details'>
-                                                                <IconButton disabled={!this.props.editForm} onClick={() => { this.setOpen("Application", this.props.ApplicationOptions, "Application"); }}>
-                                                                    <Menu fontSize="small" />
-                                                                </IconButton>
-                                                            </Tooltip>
-                                                            <Field
-                                                                as={TextField}
-                                                                variant="outlined"
-                                                                style={{minWidth: 300,maxWidth:700 }}
-                                                                //label="Application"
-                                                                name="Application"
-                                                                error={formik.errors.Application && formik.touched.Application
-                                                                    ? formik.errors.Application
-                                                                    : null}
-                                                                helperText={formik.errors.Application}
+                                                    <Tooltip title={formik.values.Application ? formik.values.Application : "Empty"} arrow placement="right">
+                                                        <div>
+                                                            <FormControlLabel
                                                                 disabled={!this.props.editForm}
+                                                                control={<Grid item>
+                                                                    <Tooltip title='Details'>
+                                                                        <IconButton disabled={!this.props.editForm} onClick={() => { this.setOpen("Application", this.props.ApplicationOptions, "Application"); }}>
+                                                                            <Menu fontSize="small" />
+                                                                        </IconButton>
+                                                                    </Tooltip>
+                                                                    <Field
+                                                                        as={TextField}
+                                                                        variant="outlined"
+                                                                        style={{ minWidth: 300, maxWidth: 700 }}
+                                                                        //label="Application"
+                                                                        name="Application"
+                                                                        error={formik.errors.Application && formik.touched.Application
+                                                                            ? formik.errors.Application
+                                                                            : null}
+                                                                        helperText={formik.errors.Application}
+                                                                        disabled={!this.props.editForm}
+                                                                    />
+                                                                </Grid>
+                                                                }
+                                                                labelPlacement="start"
+                                                                label={"Application"}
+                                                                className={classes.controlLabel}
                                                             />
-                                                            
-                                                            </Grid>
-                                                        }
-                                                        labelPlacement="start"
-                                                        label={"Application"}
-                                                        className={classes.controlLabel}
-
-                                                    />
-
-
+                                                        </div>
+                                                    </Tooltip>
                                                 </Grid>
 
                                                 <div>
@@ -656,34 +698,37 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                 label={"Applicant Contact Number"}
                                                 className={classes.controlLabel}
                                             />
+                                            <Tooltip title={formik.values.SalesRegion ? JSON.parse(formik.values.SalesRegion).join(',') : "Empty"} arrow placement="top">
+                                                <span>
+                                                    <FormControlLabel
+                                                        disabled={!this.props.editForm}
+                                                        control={<Field
+                                                            name="SalesRegion">
+                                                            {(fieldProps) => {
+                                                                return (
+                                                                    <Controls.MultipleSelect
+                                                                        fieldName="SalesRegion"
+                                                                        //label="Sales Region"
+                                                                        setFieldValue={fieldProps.form.setFieldValue}
+                                                                        ////dname="SalesRegionDescription"
+                                                                        fieldValue={initializeValues(fieldProps.field.value)}
+                                                                        options={this.FilterKeywords('Sales Region')}
+                                                                        //onChange={formik.handleChange}
+                                                                        error={formik.errors.SalesRegion && formik.touched.SalesRegion
+                                                                            ? formik.errors.SalesRegion
+                                                                            : null}
+                                                                        disabled={!this.props.editForm}
+                                                                    />
+                                                                );
+                                                            }}
 
-
-                                            <FormControlLabel
-                                                control={<Field
-                                                    name="SalesRegion">
-                                                    {(fieldProps) => {
-                                                        return (
-                                                            <Controls.MultipleSelect
-                                                                fieldName="SalesRegion"
-                                                                //label="Sales Region"
-                                                                setFieldValue={fieldProps.form.setFieldValue}
-                                                                dname="SalesRegionDescription"
-                                                                fieldValue={initializeValues(fieldProps.field.value)}
-                                                                options={this.props.SalesRegionOptions}
-                                                                //onChange={formik.handleChange}
-                                                                error={formik.errors.SalesRegion && formik.touched.SalesRegion
-                                                                    ? formik.errors.SalesRegion
-                                                                    : null}
-                                                                disabled={!this.props.editForm}
-                                                            />
-                                                        );
-                                                    }}
-
-                                                </Field>}
-                                                labelPlacement="start"
-                                                label={"Sales Region"}
-                                                className={classes.controlLabel}
-                                            />
+                                                        </Field>}
+                                                        labelPlacement="start"
+                                                        label={"Sales Region"}
+                                                        className={classes.controlLabel}
+                                                    />
+                                                </span>
+                                            </Tooltip>
                                             <FormControlLabel
                                                 control={<Field
                                                     as={TextField}
@@ -749,10 +794,11 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                 control={<Controls.Select
                                                     name="FinalApprover"
                                                     value={formik.values.FinalApprover}
-                                                    options={this.FilterFinalApproverOptions(formik.values.VisitorType)}
+                                                    //options={this.FilterFinalApproverOptions(formik.values.VisitorType)}
+                                                    options={this.FilterKeywords("Final Approver")}
                                                     onChange={formik.handleChange}
                                                     setFieldValue={formik.setFieldValue}
-                                                    dname="FinalApproverDescription"
+                                                    //dname="FinalApproverDescription"
                                                     error={formik.errors.FinalApprover && formik.touched.FinalApprover
                                                         ? formik.errors.FinalApprover
                                                         : null}
@@ -836,14 +882,6 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                             }}
                                         </Field>
                                     </Grid>
-
-                                    <Grid item xs={12} sm={12}>
-                                        <MuiTypography>
-                                            <pre style={{ fontFamily: 'inherit' }}>
-                                                {formik.values.ApprovalHistory}
-                                            </pre>
-                                        </MuiTypography>
-                                    </Grid>
                                 </Grid>
 
                                 <Controls.DialogMultipleSelect
@@ -861,7 +899,6 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
 
                     </Formik>
                     <Grid item>
-
                         {!(this.initialValues.ID == null) ? '' :
                             <div className={classes.root}>
                                 <input className={classes.input} id="file"
@@ -891,6 +928,13 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                 />
                             </div>
                         }
+                    </Grid>
+                    <Grid item xs={12} sm={12}>
+                        <MuiTypography>
+                            <pre style={{ fontFamily: 'inherit' }}>
+                                {this.initialValues.ApprovalHistory}
+                            </pre>
+                        </MuiTypography>
                     </Grid>
                 </Paper>
 
