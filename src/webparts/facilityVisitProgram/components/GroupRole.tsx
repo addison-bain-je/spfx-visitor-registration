@@ -76,7 +76,7 @@ class GroupRoleDataTable extends React.Component<IProps, IDataTableState>{
             },
             CheckBoxGroupOptions: [],
         };
-        this._service = new service(props.context, props.context.pageContext);
+        this._service = new service(props.context);
         this.getRoles("Role", ["ID", "Name"]);
         this.getAllUserGroups();
         this._selection = [];

@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import AddIcon from '@material-ui/icons/Add';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import { QualityAuditApproverItem, SelectOptionItem, } from './ItemDefine';
+import { QualityAuditApproverItem, SelectOptionItem, KeywordItem } from './ItemDefine';
 import { createStyles, Theme } from "@material-ui/core/styles";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Slide from '@material-ui/core/Slide';
@@ -43,6 +43,7 @@ interface IDataTableState {
     _QualityAuditApproverItem: QualityAuditApproverItem;
     editForm: boolean;
     SubVisitorTypeOptions: SelectOptionItem[];
+    Keywords: KeywordItem[];
 }
 
 interface IProps {
@@ -68,6 +69,7 @@ class QualityAuditApproverDataTable extends React.Component<IProps, IDataTableSt
             SubVisitorTypeOptions: [],
             showForm: false,
             editForm: true,
+            Keywords: [],
             _QualityAuditApproverItem: {
                 ID: null,
                 AuditApprover: '',
@@ -75,10 +77,29 @@ class QualityAuditApproverDataTable extends React.Component<IProps, IDataTableSt
             },
 
         };
-        this._service = new service(props.context, props.context.pageContext);
+        this._service = new service(props.context);
         this._selection = [];
-        this.getSubVisitorTypeOptions("SubVisitorType", ["ID", "SubVisitorType"]);
+        //this.getSubVisitorTypeOptions("SubVisitorType", ["ID", "SubVisitorType"]);
         this.viewFields = [
+            {
+                name: 'QualityAuditType',
+                displayName: 'Visiting Purpose',
+                //linkPropertyName: 'c',
+                isResizable: true,
+                sorting: true,
+                minWidth: 80,
+                maxWidth: 150,
+                render: (item: any) => {
+                    return <Link style={{ color: 'orange' }}
+                        onClick={() => {
+                            this.openForm("QualityAuditType", item['ID'], false);
+                        }}
+                    >{item['QualityAuditType']}</Link>;
+                }
+                // render: (item: any) => {
+                //     return this.getTitleById(item['QualityAuditType'], this.state.SubVisitorTypeOptions);
+                // }
+            },
             {
                 name: 'AuditApprover',
                 displayName: 'Audit Approver',
@@ -95,34 +116,19 @@ class QualityAuditApproverDataTable extends React.Component<IProps, IDataTableSt
                     >{item['AuditApprover']}</Link>;
                 }
             },
-            {
-                name: 'QualityAuditType',
-                displayName: 'QualityAuditType',
-                //linkPropertyName: 'c',
-                isResizable: true,
-                sorting: true,
-                minWidth: 80,
-                maxWidth: 150,
-                render: (item: any) => {
-                    return this.getTitleById(item['QualityAuditType'], this.state.SubVisitorTypeOptions);
-                }
-            },
-            
-
 
         ];
 
 
     }
-    private getTitleById(ID: string, arrayName: SelectOptionItem[]): string {
-        var v: SelectOptionItem[] = [];
-        v = arrayName.filter(obj => obj.id == ID);
-        return (v[0].title);
-    }
+    // private getTitleById(ID: string, arrayName: SelectOptionItem[]): string {
+    //     var v: SelectOptionItem[] = [];
+    //     v = arrayName.filter(obj => obj.id == ID);
+    //     return (v[0].title);
+    // }
     private _getSelection = (items: QualityAuditApproverItem[]) => {
         this._selection = items;
     }
-
     private getData(): void {
         this._service.getAllrecords("QualityAuditApprover").then((result: QualityAuditApproverItem[]) => {
             this.setState({ ListData: result });
@@ -136,10 +142,15 @@ class QualityAuditApproverDataTable extends React.Component<IProps, IDataTableSt
     private editForm(): void {
         this.setState({ showForm: true, editForm: true });
     }
-
+    private getKeywords(listName: string, selectFields: string[]): void {
+        this._service.filterItems(listName, selectFields).then((items: any[]) => {
+            this.setState({ Keywords: items });
+        });
+    }
     public componentDidMount() {
         this.getData();
-        
+        this.getKeywords("Keywords", ["Key", "Values"]);
+
     }
 
     private closeForm(): void {
@@ -152,19 +163,19 @@ class QualityAuditApproverDataTable extends React.Component<IProps, IDataTableSt
             }
         });
     }
-    private getSubVisitorTypeOptions(listName: string, selectFields: string[]): void {
-        const result: SelectOptionItem[] = [];
-        this._service.filterItems(listName, selectFields).then((items: any[]) => {
-            items.map((item) => {
-                result.push({
-                    id: String(item.ID),
-                    title: item.SubVisitorType,
+    // private getSubVisitorTypeOptions(listName: string, selectFields: string[]): void {
+    //     const result: SelectOptionItem[] = [];
+    //     this._service.filterItems(listName, selectFields).then((items: any[]) => {
+    //         items.map((item) => {
+    //             result.push({
+    //                 id: String(item.ID),
+    //                 title: item.SubVisitorType,
 
-                });
-            });
-            this.setState({ SubVisitorTypeOptions: result });
-        });
-    }
+    //             });
+    //         });
+    //         this.setState({ SubVisitorTypeOptions: result });
+    //     });
+    // }
     public render() {
         const { classes } = this.props;
         return (
@@ -173,7 +184,7 @@ class QualityAuditApproverDataTable extends React.Component<IProps, IDataTableSt
                     <Grid container justify="flex-end">
                         <Typography className={classes.viewtitle} variant='subtitle2'>Quality Audit Approver Profile</Typography>
                     </Grid>
-                    
+
                     <Button className={classes.button} variant="text" startIcon={<AddIcon />} color="primary" onClick={() => { this.setState({ showForm: true, editForm: true, }); }}>New Quality Audit Approver</Button>
                     <ListView
                         items={this.state.ListData}
@@ -191,6 +202,8 @@ class QualityAuditApproverDataTable extends React.Component<IProps, IDataTableSt
                         className={classes.dialogroot}
                         open={this.state.showForm}
                         TransitionComponent={Transition}
+                        fullWidth={true}
+                        maxWidth={"md"}
                     >
                         <DialogTitle>Quality Audit Approver Profile</DialogTitle>
                         <DialogContent>
@@ -200,7 +213,8 @@ class QualityAuditApproverDataTable extends React.Component<IProps, IDataTableSt
                                 formInitialValues={this.state._QualityAuditApproverItem}
                                 closeForm={this.closeForm.bind(this)}
                                 refreshData={this.getData.bind(this)}
-                                SubVisitorTypeOptions={this.state.SubVisitorTypeOptions}
+                                //SubVisitorTypeOptions={this.state.SubVisitorTypeOptions}
+                                Keywords={this.state.Keywords}
                                 editForm={this.state.editForm}
 
                             />

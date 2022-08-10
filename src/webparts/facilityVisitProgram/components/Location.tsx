@@ -47,6 +47,7 @@ interface IDataTableState {
 interface IProps {
     context: WebPartContext;
     classes?: any;
+    IsAdmin: boolean;
 }
 /*
 const groupByFields: IGrouping[] = [{
@@ -86,11 +87,11 @@ class LocationDataTable extends React.Component<IProps, IDataTableState>{
             },
 
         };
-        this._service = new service(props.context, props.context.pageContext);
+        this._service = new service(props.context);
         this._selection = [];
 
         this.viewFields = [
-            
+
             {
                 name: 'PlantArea',
                 displayName: 'Plant Area',
@@ -211,8 +212,16 @@ class LocationDataTable extends React.Component<IProps, IDataTableState>{
                     <Grid container justify="flex-end">
                         <Typography className={classes.viewtitle} variant='subtitle2'>Location Profile</Typography>
                     </Grid>
-                    
-                    <Button className={classes.button}  variant="text" startIcon={<AddIcon />} color="primary" onClick={() => { this.setState({ showForm: true, editForm: true, }); }}>New Location</Button>
+                    {!this.props.IsAdmin ? null : <div>
+                        <Button
+                            className={classes.button}
+                            variant="text"
+                            startIcon={<AddIcon />}
+                            color="primary"
+                            onClick={() => { this.setState({ showForm: true, editForm: true, }); }}>
+                            New Location
+                        </Button>
+                    </div>}
                     <ListView
                         items={this.state.ListData}
                         showFilter={true}
@@ -229,6 +238,8 @@ class LocationDataTable extends React.Component<IProps, IDataTableState>{
                         className={classes.dialogroot}
                         open={this.state.showForm}
                         TransitionComponent={Transition}
+                        fullWidth={true}
+                        maxWidth={"lg"}
                     >
                         <DialogTitle>Location Profile</DialogTitle>
                         <DialogContent>
@@ -243,9 +254,12 @@ class LocationDataTable extends React.Component<IProps, IDataTableState>{
 
                         </DialogContent>
                         <DialogActions>
-                            <Button color="primary" type="submit" form="locatoinForm" disabled={!this.state.editForm}> save</Button>
-                            <Button color="primary" disabled={this.state.editForm} onClick={this.editForm.bind(this)}> Edit</Button>
-                            <Button color="primary" onClick={this.closeForm.bind(this)}>Cancel</Button>
+                            {!this.props.IsAdmin ? null :
+                                <div>
+                                    <Button color="primary" type="submit" form="locatoinForm" disabled={!this.state.editForm}> save</Button>
+                                    <Button color="primary" disabled={this.state.editForm} onClick={this.editForm.bind(this)}> Edit</Button>
+                                </div>}
+                            <Button color="primary" onClick={this.closeForm.bind(this)}>Close</Button>
                         </DialogActions>
                     </MuiDialog>
                 </div>

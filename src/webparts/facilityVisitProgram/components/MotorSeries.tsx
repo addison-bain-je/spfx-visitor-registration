@@ -64,7 +64,7 @@ class MotorSeriesDataTable extends React.Component<IProps, IDataTableState>{
             },
 
         };
-        this._service = new service(props.context, props.context.pageContext);
+        this._service = new service(props.context);
         this._selection = [];
 
         this.viewFields = [
@@ -128,8 +128,8 @@ class MotorSeriesDataTable extends React.Component<IProps, IDataTableState>{
                     <Grid container justify="flex-end">
                         <Typography variant='subtitle2'>Motor Series Profile</Typography>
                     </Grid>
-                   
-                    <Button style={{textTransform: 'none'}} variant="text" startIcon={<AddIcon />} color="primary" onClick={() => { this.setState({ showForm: true, editForm: true, }); }}>New Motor Series</Button>
+
+                    <Button style={{ textTransform: 'none' }} variant="text" startIcon={<AddIcon />} color="primary" onClick={() => { this.setState({ showForm: true, editForm: true, }); }}>New Motor Series</Button>
                     <ListView
                         items={this.state.ListData}
                         showFilter={true}

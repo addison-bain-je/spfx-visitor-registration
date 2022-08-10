@@ -2,13 +2,13 @@ import * as React from 'react';
 import { ListView, IViewField, SelectionMode, GroupOrder, IGrouping } from '@pnp/spfx-controls-react/lib/ListView';
 import { fvpService } from '../service/fvpService';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { IconButton, AppBar, Toolbar, Grid, Typography, Button } from '@material-ui/core';
+import { IconButton, AppBar, Toolbar, Grid, Typography, Button, Tooltip } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import AddIcon from '@material-ui/icons/Add';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import FvpForm from './FvpForm';
-import { fvpItem, newItem, SelectOptionItem, FinalApproverItem, LocationItem } from './ItemDefine';
+import { fvpItem, newItem, SelectOptionItem, FinalApproverItem, LocationItem, KeywordItem } from './ItemDefine';
 import { createStyles, Theme } from "@material-ui/core/styles";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Slide from '@material-ui/core/Slide';
@@ -60,6 +60,7 @@ interface IDataTableState {
   FinalApproverOptions: FinalApproverItem[];
   LocationOptions: LocationItem[];
   BUSegmentOptions: SelectOptionItem[];
+  Keywords: KeywordItem[];
 }
 
 interface IProps {
@@ -98,6 +99,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
       FinalApproverOptions: [],
       LocationOptions: [],
       BUSegmentOptions: [],
+      Keywords: [],
       _fvpItem: {
         ApplicantContactNumber: null,
         RequestNo: '',
@@ -124,7 +126,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
       },
     };
     this._fvpService = new fvpService(props.context, props.context.pageContext);
-    this._service = new service(props.context, props.context.pageContext);
+    this._service = new service(props.context);
     this._selection = [];
     this.viewFields = [
       {
@@ -160,30 +162,32 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         maxWidth: 150
       },
       {
-        name: 'BUDescription',
+        name: 'BU',
         displayName: 'BU',
         isResizable: true,
         sorting: true,
         minWidth: 150,
         maxWidth: 150,
         render: (item: any) => {
-          if (item['BUDescription']) {
-            return JSON.parse(item['BUDescription']).join(',');
+          if (item['BU']) {
+            return (<Tooltip title={JSON.parse(item['BU']).join(',')} arrow><div>
+              {JSON.parse(item['BU']).join(',')}</div></Tooltip>);
           }
           else
             return '';
         }
       },
       {
-        name: 'SalesRegionDescription',
+        name: 'SalesRegion',
         displayName: 'Sales Region',
         isResizable: true,
         sorting: true,
         minWidth: 150,
         maxWidth: 150,
         render: (item: any) => {
-          if (item['SalesRegionDescription']) {
-            return JSON.parse(item['SalesRegionDescription']).join(',');
+          if (item['SalesRegion']) {
+            return (<Tooltip title={JSON.parse(item['SalesRegion']).join(',')} arrow><div>
+              {JSON.parse(item['SalesRegion']).join(',')}</div></Tooltip>);
           }
           else
             return '';
@@ -197,10 +201,17 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         sorting: true,
         minWidth: 150,
         maxWidth: 150,
-
+        render: (item: any) => {
+          if (item['Application']) {
+            return (<Tooltip title={item['Application']} arrow><div>
+              {item['Application']}</div></Tooltip>);
+          }
+          else
+            return '';
+        }
       },
       {
-        name: 'VisitorTypeDescription',
+        name: 'VisitorType',
         displayName: 'Visitor Type',
         isResizable: true,
         sorting: true,
@@ -208,7 +219,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         maxWidth: 150,
       },
       {
-        name: 'VisitingPurposeDescription',
+        name: 'VisitingPurpose',
         displayName: 'Visiting Purpose',
         isResizable: true,
         sorting: true,
@@ -251,93 +262,116 @@ class DataTable extends React.Component<IProps, IDataTableState>{
 
 
 
-  private getTitleByIdList(elements: string[], array: SelectOptionItem[]): string {
-    const r: string[] = [];
-    elements.map((item => {
-      r.push(array.filter(obj => obj.id == item)[0].title);
-    }));
-    return r.join(', ');
-  }
-  private getTitleById(ID: string, arrayName: SelectOptionItem[]): string {
-    var v: SelectOptionItem[] = [];
-    v = arrayName.filter(obj => obj.id == ID);
-    return (v[0].title);
-  }
-  private getVisitorTypeOptions(listName: string, selectFields: string[]): void {
-    const result: SelectOptionItem[] = [];
-    this._service.filterItems(listName, selectFields).then((items: any[]) => {
-      items.map((item) => {
-        result.push({
-          id: String(item.ID),
-          title: item.VisitorType,
-        });
-      });
-      this.setState({ VisitorTypeOptions: result });
-    });
-  }
+  // private getTitleByIdList(elements: string[], array: SelectOptionItem[]): string {
+  //   const r: string[] = [];
+  //   elements.map((item => {
+  //     r.push(array.filter(obj => obj.id == item)[0].title);
+  //   }));
+  //   return r.join(', ');
+  // }
 
-  private getSalesRegionOptions(listName: string, selectFields: string[]): void {
-    const result: SelectOptionItem[] = [];
-    this._service.filterItems(listName, selectFields).then((items: any[]) => {
-      items.map((item) => {
-        result.push({
-          id: String(item.ID),
-          title: item.Name,
-        });
-      });
-      this.setState({ SalesRegionOptions: result });
-    });
-  }
+  // private getTitleById(ID: string, arrayName: SelectOptionItem[]): string {
+  //   var v: SelectOptionItem[] = [];
+  //   v = arrayName.filter(obj => obj.id == ID);
+  //   return (v[0].title);
+  // }
 
-  private getBUOptions(listName: string, selectFields: string[]): void {
-    const result: SelectOptionItem[] = [];
-    this._service.filterItems(listName, selectFields).then((items: any[]) => {
-      items.map((item) => {
-        result.push({
-          id: item.ID,
-          title: item.Name,
-        });
-      });
-      this.setState({ BUOptions: result });
-    });
-  }
-  private getBUSegmentOptions(listName: string, selectFields: string[]): void {
-    const result: SelectOptionItem[] = [];
-    this._service.filterItems(listName, selectFields).then((items: any[]) => {
-      items.map((item) => {
-        result.push({
-          id: item.ID,
-          title: item.Name,
-        });
-      });
-      this.setState({ BUSegmentOptions: result });
-    });
-  }
+  // private getVisitorTypeOptions(listName: string, selectFields: string[]): void {
+  //   const result: SelectOptionItem[] = [];
+  //   this._service.filterItems(listName, selectFields).then((items: any[]) => {
+  //     items.map((item) => {
+  //       result.push({
+  //         id: String(item.ID),
+  //         title: item.VisitorType,
+  //       });
+  //     });
+  //     this.setState({ VisitorTypeOptions: result });
+  //   });
+  // }
+
+  // private getSalesRegionOptions(listName: string, selectFields: string[]): void {
+  //   const result: SelectOptionItem[] = [];
+  //   this._service.filterItems(listName, selectFields).then((items: any[]) => {
+  //     items.map((item) => {
+  //       result.push({
+  //         id: String(item.ID),
+  //         title: item.Name,
+  //       });
+  //     });
+  //     this.setState({ SalesRegionOptions: result });
+  //   });
+  // }
+
+  // private getBUOptions(listName: string, selectFields: string[]): void {
+  //   const result: SelectOptionItem[] = [];
+  //   this._service.filterItems(listName, selectFields).then((items: any[]) => {
+  //     items.map((item) => {
+  //       result.push({
+  //         id: item.ID,
+  //         title: item.Name,
+  //       });
+  //     });
+  //     this.setState({ BUOptions: result });
+  //   });
+  // }
+
+  // private getBUSegmentOptions(listName: string, selectFields: string[]): void {
+  //   const result: SelectOptionItem[] = [];
+  //   this._service.filterItems(listName, selectFields).then((items: any[]) => {
+  //     items.map((item) => {
+  //       result.push({
+  //         id: item.ID,
+  //         title: item.Name,
+  //       });
+  //     });
+  //     this.setState({ BUSegmentOptions: result });
+  //   });
+  // }
 
 
-  private getVisitingPurposeOptions(listName: string, selectFields: string[]): void {
-    const result: SelectOptionItem[] = [];
-    this._service.filterItems(listName, selectFields).then((items: any[]) => {
-      items.map((item) => {
-        result.push({
-          id: String(item.ID),
-          title: item.SubVisitorType,
+  // private getVisitingPurposeOptions(listName: string, selectFields: string[]): void {
+  //   const result: SelectOptionItem[] = [];
+  //   this._service.filterItems(listName, selectFields).then((items: any[]) => {
+  //     items.map((item) => {
+  //       result.push({
+  //         id: String(item.ID),
+  //         title: item.SubVisitorType,
+  //       });
+  //     });
+  //     this.setState({ VisitingPurposeOptions: result });
+  //   });
+  // }
 
-        });
-      });
-      this.setState({ VisitingPurposeOptions: result });
-    });
-  }
+  // private getMotorSeriesOptions(listName: string, selectFields: string[]): void {
+  //   const result: string[] = [];
+  //   this._service.filterItems(listName, selectFields).then((items: any[]) => {
+  //     items.map((item) => {
+  //       result.push(item.Name);
+  //     });
+  //     this.setState({ MotorSeriesOptions: result });
+  //   });
+  // }
 
-  private getMotorSeriesOptions(listName: string, selectFields: string[]): void {
-    const result: string[] = [];
-    this._service.filterItems(listName, selectFields).then((items: any[]) => {
-      items.map((item) => {
-        result.push(item.Name);
-      });
-      this.setState({ MotorSeriesOptions: result });
-    });
-  }
+  // private getMarketingCoordinator(listName: string, selectFields: string[]): void {
+  //   this._service.filterItems(listName, selectFields).then((items: any[]) => {
+  //     this.setState({ MarketingCoordinator: items[0].MarketingCoordinator });
+  //   });
+  // }
+
+  // private getFinalApproverOptions(listName: string, selectFields: string[]): void {
+  //   const result: FinalApproverItem[] = [];
+  //   this._service.filterItems(listName, selectFields).then((items: any[]) => {
+  //     items.map((item) => {
+  //       result.push({
+  //         ID: String(item.ID),
+  //         FinalApprover: item.FinalApprover,
+  //         VisitorType: item.VisitorType,
+  //       });
+  //     });
+  //     this.setState({ FinalApproverOptions: result });
+  //   });
+  // }
+
   /*
     private getApplicationOptions(listName: string, selectFields: string[]): void {
       const result: SelectOptionItem[] = [];
@@ -352,6 +386,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
       });
     }
   */
+
   private getApplicationOptions(listName: string, selectFields: string[]): void {
     const result: string[] = [];
     this._service.filterItems(listName, selectFields).then((items: any[]) => {
@@ -362,25 +397,6 @@ class DataTable extends React.Component<IProps, IDataTableState>{
     });
   }
 
-  private getMarketingCoordinator(listName: string, selectFields: string[]): void {
-    this._service.filterItems(listName, selectFields).then((items: any[]) => {
-      this.setState({ MarketingCoordinator: items[0].MarketingCoordinator });
-    });
-  }
-
-  private getFinalApproverOptions(listName: string, selectFields: string[]): void {
-    const result: FinalApproverItem[] = [];
-    this._service.filterItems(listName, selectFields).then((items: any[]) => {
-      items.map((item) => {
-        result.push({
-          ID: String(item.ID),
-          FinalApprover: item.FinalApprover,
-          VisitorType: item.VisitorType,
-        });
-      });
-      this.setState({ FinalApproverOptions: result });
-    });
-  }
   private getLocationOptions(listName: string): void {
     const result: LocationItem[] = [];
     this._service.getAllrecords(listName).then((items: LocationItem[]) => {
@@ -409,8 +425,6 @@ class DataTable extends React.Component<IProps, IDataTableState>{
     });
   }
 
-
-
   private _getSelection = (items: fvpItem[]) => {
     this._selection = items;
   }
@@ -430,18 +444,25 @@ class DataTable extends React.Component<IProps, IDataTableState>{
     this.setState({ showForm: true, editForm: true });
   }
 
+  private getKeywords(listName: string, selectFields: string[]): void {
+    this._service.filterItems(listName, selectFields).then((items: any[]) => {
+      this.setState({ Keywords: items });
+    });
+  }
+
   public componentDidMount() {
-    this.getData();
-    this.getVisitorTypeOptions("VisitorType", ["ID", "VisitorType"]);
-    this.getSalesRegionOptions("SalesRegion", ["ID", "Name"]);
-    this.getBUOptions("BU", ["ID", "Name"]);
-    this.getBUSegmentOptions("BUSegment", ["ID", "Name"]);
-    this.getVisitingPurposeOptions("SubVisitorType", ["ID", "SubVisitorType"]);
-    this.getMotorSeriesOptions("MotorSeries", ["Name"]);
     this.getApplicationOptions("Application", ["Name"]);
-    this.getMarketingCoordinator("MarketingCoordinator", ["ID", "MarketingCoordinator"]);
-    this.getFinalApproverOptions("FinalApprover", ["ID", "VisitorType", "FinalApprover"]);
     this.getLocationOptions("Location");
+    this.getKeywords("Keywords", ["Key", "Values"]);
+    this.getData();
+    // this.getVisitorTypeOptions("VisitorType", ["ID", "VisitorType"]);
+    // this.getSalesRegionOptions("SalesRegion", ["ID", "Name"]);
+    // this.getBUOptions("BU", ["ID", "Name"]);
+    // this.getBUSegmentOptions("BUSegment", ["ID", "Name"]);
+    // this.getVisitingPurposeOptions("SubVisitorType", ["ID", "SubVisitorType"]);
+    // this.getMotorSeriesOptions("MotorSeries", ["Name"]);
+    // this.getMarketingCoordinator("MarketingCoordinator", ["ID", "MarketingCoordinator"]);
+    // this.getFinalApproverOptions("FinalApprover", ["ID", "VisitorType", "FinalApprover"]);
     //console.log(this.VisitorTypeOptions);
 
   }
@@ -514,16 +535,17 @@ class DataTable extends React.Component<IProps, IDataTableState>{
                 editForm={this.state.editForm}
                 handleEdit={this.editForm.bind(this)}
                 listID={this.state.listID}
-                VisitorTypeOptions={this.state.VisitorTypeOptions}
-                SalesRegionOptions={this.state.SalesRegionOptions}
-                BUOptions={this.state.BUOptions}
-                VisitingPurposeOptions={this.state.VisitingPurposeOptions}
-                MotorSeriesOptions={this.state.MotorSeriesOptions}
                 ApplicationOptions={this.state.ApplicationOptions}
-                MarketingCoordinator={this.state.MarketingCoordinator}
-                FinalApproverOptions={this.state.FinalApproverOptions}
                 LocationOptions={this.state.LocationOptions}
-                BUSegmentOptions={this.state.BUSegmentOptions}
+                keywords={this.state.Keywords}
+                // VisitorTypeOptions={this.state.VisitorTypeOptions}
+                // SalesRegionOptions={this.state.SalesRegionOptions}
+                // BUOptions={this.state.BUOptions}
+                // VisitingPurposeOptions={this.state.VisitingPurposeOptions}
+                // MotorSeriesOptions={this.state.MotorSeriesOptions}
+                // MarketingCoordinator={this.state.MarketingCoordinator}
+                // FinalApproverOptions={this.state.FinalApproverOptions}
+                // BUSegmentOptions={this.state.BUSegmentOptions}               
               />
             </DialogContent>
             <DialogActions>

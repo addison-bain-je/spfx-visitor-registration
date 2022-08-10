@@ -3,11 +3,12 @@ import { FormControl, FormLabel, RadioGroup as MuiRadioGroup, FormControlLabel, 
 
 export default function RadioGroup(props) {
 
-    const { name, label, value, onChange, items, error } = props;
+    const { name, label, value, onChange, items, error, disabled } = props;
 
     return (
         <FormControl
             variant="outlined"
+            disabled={disabled}
             {...(error && { error: true })}
         >
             <FormLabel>{label}</FormLabel>

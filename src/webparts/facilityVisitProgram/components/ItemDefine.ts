@@ -162,4 +162,8 @@ export interface SequentialNumberItem {
     Year: string;
     SequentialNumber: string;
 }
-
+export interface KeywordItem {
+    ID?: string;
+    Key: string;
+    Values: string;
+}

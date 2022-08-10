@@ -43,7 +43,7 @@ class FinalApproverForm extends React.Component<finalApproverFormProps> {
     constructor(props: finalApproverFormProps) {
         super(props);
         this.initialValues = this.props.formInitialValues;
-        this._service = new service(this.props.context, this.props.context.pageContext);
+        this._service = new service(this.props.context);
     }
 
     private onSubmit = (values, { setSubmitting, resetForm }) => {

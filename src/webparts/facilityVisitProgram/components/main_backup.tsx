@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => createStyles({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    backgroundColor: orange[500],
+    backgroundColor:orange[500],
   },
   appBarShift: {
     marginLeft: drawerWidth,
@@ -143,16 +143,16 @@ const useStyles = makeStyles((theme) => createStyles({
     maxWidth: 240,
     backgroundColor: theme.palette.background.paper,
   },
-  ListItem: {
-    color: orange[500],
-
+  ListItem:{
+    color:orange[500],
+    
   },
 }));
 
 
 
 export default function Main(props) {
-  //const isNotAdmin = (props.userRoles.indexOf("Admin") == -1);//default true
+  const isNotAdmin = (props.userRoles.indexOf("Admin") == -1);//default true
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -176,7 +176,10 @@ export default function Main(props) {
     setSelectedIndex(index);
   };
 
+
+
   return (
+
     < div className={classes.root} >
       <HashRouter>
         <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
@@ -192,7 +195,7 @@ export default function Main(props) {
             </IconButton>
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               Facility Visit Program
-            </Typography>
+                </Typography>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -212,7 +215,7 @@ export default function Main(props) {
             <List component="nav">
 
               <ListItem
-                className={classes.ListItem}
+              className={classes.ListItem}
                 button
                 component={Link}
                 to='/'
@@ -226,9 +229,9 @@ export default function Main(props) {
                 <ListItemText primary="All Requests"></ListItemText>
               </ListItem>
 
-              <ListItem
-                className={classes.ListItem}
-                button component={Link} to='/scheduled'
+              <ListItem 
+              className={classes.ListItem}
+              button component={Link} to='/scheduled'
                 selected={selectedIndex === 1}
                 onClick={(event) => handleListItemClick(event, 1)}>
                 <Tooltip title="Scheduled">
@@ -238,9 +241,44 @@ export default function Main(props) {
                 </Tooltip>
                 <ListItemText primary="Scheduled"></ListItemText>
               </ListItem>
-              <ListItem className={classes.ListItem} button component={Link} to='/Location'
+              {isNotAdmin ? null : <div>
+                <Divider />
+                <ListItem className={classes.ListItem} button component={Link} to='/BU'
                   selected={selectedIndex === 2}
                   onClick={(event) => handleListItemClick(event, 2)}>
+                  <Tooltip title="BU">
+                    <ListItemIcon className={classes.ListItem}>
+                      <BusinessIcon />
+                    </ListItemIcon>
+                  </Tooltip>
+                  <ListItemText primary="BU"></ListItemText>
+                </ListItem>
+                <ListItem className={classes.ListItem} button component={Link} to='/BUSegment'
+                  selected={selectedIndex === 2.1}
+                  onClick={(event) => handleListItemClick(event, 2.1)}>
+                  <Tooltip title="BU Segment">
+                    <ListItemIcon className={classes.ListItem}>
+                    <BUSegIcon />
+                    </ListItemIcon>
+                  </Tooltip>
+                  <ListItemText primary="BU Segment"></ListItemText>
+                </ListItem>
+
+                <ListItem className={classes.ListItem} button component={Link} to='/SalesRegion'
+                  selected={selectedIndex === 3}
+                  onClick={(event) => handleListItemClick(event, 3)}>
+                  <Tooltip title="Sales Region">
+                    <ListItemIcon className={classes.ListItem}>
+                      <PieIcon />
+                    </ListItemIcon>
+                  </Tooltip>
+                  <ListItemText primary="Sales Region"></ListItemText>
+                </ListItem>
+
+
+                <ListItem className={classes.ListItem} button component={Link} to='/Location'
+                  selected={selectedIndex === 4}
+                  onClick={(event) => handleListItemClick(event, 4)}>
                   <Tooltip title="Location">
                     <ListItemIcon className={classes.ListItem}>
                       <LocationIcon />
@@ -248,21 +286,71 @@ export default function Main(props) {
                   </Tooltip>
                   <ListItemText primary="Location"></ListItemText>
                 </ListItem>
-              {!props.IsAdmin ? null : <div>
-                <Divider />
-                <ListItem className={classes.ListItem} button component={Link} to='/Keywords'
-                  selected={selectedIndex === 3}
-                  onClick={(event) => handleListItemClick(event, 3)}>
-                  <Tooltip title="Keywords">
+
+
+
+                <ListItem className={classes.ListItem} button component={Link} to='/VisitingType'
+                  selected={selectedIndex === 5}
+                  onClick={(event) => handleListItemClick(event, 5)}>
+                  <Tooltip title="Visiting Type">
                     <ListItemIcon className={classes.ListItem}>
-                      <KeyIcon />
+                      <BusinesssCenterIcon />
                     </ListItemIcon>
                   </Tooltip>
-                  <ListItemText primary="Keywords"></ListItemText>
+                  <ListItemText primary="Visiting Type"></ListItemText>
                 </ListItem>
+
+
+                <ListItem className={classes.ListItem} button component={Link} to='/SubVisitingType'
+                  selected={selectedIndex === 6}
+                  onClick={(event) => handleListItemClick(event, 6)}>
+                  <Tooltip title="Sub Visiting Type">
+                    <ListItemIcon className={classes.ListItem}>
+                      <BusinesssCenterIcon1 />
+                    </ListItemIcon>
+                  </Tooltip>
+                  <ListItemText primary="Sub Visiting Type"></ListItemText>
+                </ListItem>
+
+
+                <ListItem className={classes.ListItem} button component={Link} to='/FinalApprover'
+                  selected={selectedIndex === 7}
+                  onClick={(event) => handleListItemClick(event, 7)}>
+                  <Tooltip title="Final Approver">
+                    <ListItemIcon className={classes.ListItem}>
+                      <SupervisorIcon />
+                    </ListItemIcon>
+                  </Tooltip>
+                  <ListItemText primary="Final Approver"></ListItemText>
+                </ListItem>
+            
+                <ListItem className={classes.ListItem} button component={Link} to='/Application'
+                  selected={selectedIndex === 9}
+                  onClick={(event) => handleListItemClick(event, 9)}>
+                  <Tooltip title="Application">
+                    <ListItemIcon className={classes.ListItem}>
+                      <AppsIcon />
+                    </ListItemIcon>
+                  </Tooltip>
+                  <ListItemText primary="Application"></ListItemText>
+                </ListItem>
+
+
+                <ListItem className={classes.ListItem} button component={Link} to='/MarketingCoordinator'
+                  selected={selectedIndex === 10}
+                  onClick={(event) => handleListItemClick(event, 10)}>
+                  <Tooltip title="Marketing Coordinator">
+                    <ListItemIcon className={classes.ListItem}>
+                      <PersonIcon />
+                    </ListItemIcon>
+                  </Tooltip>
+                  <ListItemText primary="Marketing Coordinator"></ListItemText>
+                </ListItem>
+
+
                 <ListItem className={classes.ListItem} button component={Link} to='/QualityAuditApprover'
-                  selected={selectedIndex === 4}
-                  onClick={(event) => handleListItemClick(event, 4)}>
+                  selected={selectedIndex === 11}
+                  onClick={(event) => handleListItemClick(event, 11)}>
                   <Tooltip title="Quality Audit Approver">
                     <ListItemIcon className={classes.ListItem}>
                       <HighQualityIcon />
@@ -270,26 +358,66 @@ export default function Main(props) {
                   </Tooltip>
                   <ListItemText primary="Quality Audit Approver"></ListItemText>
                 </ListItem>
-                <ListItem className={classes.ListItem} button component={Link} to='/Application'
-                  selected={selectedIndex === 5}
-                  onClick={(event) => handleListItemClick(event, 5)}>
-                  <Tooltip title="Application">
+
+
+                <ListItem className={classes.ListItem} button component={Link} to='/CEO'
+                  selected={selectedIndex === 12}
+                  onClick={(event) => handleListItemClick(event, 12)}>
+                  <Tooltip title="CEO">
                     <ListItemIcon className={classes.ListItem}>
-                      <AppsIcon />
+                      <PersonPinIcon />
                     </ListItemIcon>
                   </Tooltip>
-                  <ListItemText primary="Application"></ListItemText>
-                </ListItem> 
+                  <ListItemText primary="CEO"></ListItemText>
+                </ListItem>
+
+
+                <ListItem className={classes.ListItem} button component={Link} to='/GroupRole'
+                  selected={selectedIndex === 13}
+                  onClick={(event) => handleListItemClick(event, 13)}>
+                  <Tooltip title="Group Role">
+                    <ListItemIcon className={classes.ListItem}>
+                      <GroupWorkIcon />
+                    </ListItemIcon>
+                  </Tooltip>
+                  <ListItemText primary="Group Role"></ListItemText>
+                </ListItem>
+
+
+                <ListItem className={classes.ListItem} button component={Link} to='/Role'
+                  selected={selectedIndex === 14}
+                  onClick={(event) => handleListItemClick(event, 14)}>
+                  <Tooltip title="Role">
+                    <ListItemIcon className={classes.ListItem}>
+                      <AccountBoxIcon />
+                    </ListItemIcon>
+                  </Tooltip>
+                  <ListItemText primary="Role"></ListItemText>
+                </ListItem>
+
+
                 <ListItem className={classes.ListItem} button component={Link} to='/SequentialNumber'
-                  selected={selectedIndex === 6}
-                  onClick={(event) => handleListItemClick(event, 6)}>
+                  selected={selectedIndex === 15}
+                  onClick={(event) => handleListItemClick(event, 15)}>
                   <Tooltip title="Sequential Number">
                     <ListItemIcon className={classes.ListItem}>
                       <TrendingUpIcon />
                     </ListItemIcon>
                   </Tooltip>
                   <ListItemText primary="Sequential Number"></ListItemText>
-                </ListItem>       
+                </ListItem>
+
+                <ListItem className={classes.ListItem} button component={Link} to='/Keywords'
+                  selected={selectedIndex === 16}
+                  onClick={(event) => handleListItemClick(event, 16)}>
+                  <Tooltip title="Keywords">
+                    <ListItemIcon className={classes.ListItem}>
+                      <KeyIcon />
+                    </ListItemIcon>
+                  </Tooltip>
+                  <ListItemText primary="Keywords"></ListItemText>
+                </ListItem>
+
               </div>}
 
             </List>
@@ -303,13 +431,25 @@ export default function Main(props) {
               <Grid item xs={12} md={12} lg={12}>
                 <Paper className={classes.paper}>
                   <Route exact path='/' component={() => <DataTable {...props} />} />
-                  <Route exact path='/Scheduled' component={() => <Scheduled {...props} />} />
+                  <Route exact path='/BU' component={() => <BU {...props} />} />
+                  <Route exact path='/BUSegment' component={() => <BUSegment {...props} />} />
+                  <Route exact path='/SalesRegion' component={() => <SalesRegion {...props} />} />
                   <Route exact path='/Location' component={() => <Location {...props} />} />
-                  <Route exact path='/Keywords' component={() => <Keywords {...props} />} />
-                  <Route exact path='/QualityAuditApprover' component={() => <QualityAuditApprover {...props} />} />
+                  <Route exact path='/VisitingType' component={() => <VisitorType {...props} />} />
+                  <Route exact path='/SubVisitingType' component={() => <SubVisitorType {...props} />} />
+                  <Route exact path='/FinalApprover' component={() => <FinalApprover {...props} />} />
+                  <Route exact path='/MotorSeries' component={() => <MotorSeries {...props} />} />
                   <Route exact path='/Application' component={() => <Application {...props} />} />
+                  <Route exact path='/MarketingCoordinator' component={() => <MarketingCoordinator {...props} />} />
+                  <Route exact path='/Role' component={() => <Role {...props} />} />
+                  <Route exact path='/GroupRole' component={() => <GroupRole {...props} />} />
+                  <Route exact path='/CEO' component={() => <CEO {...props} />} />
+                  <Route exact path='/QualityAuditApprover' component={() => <QualityAuditApprover {...props} />} />
                   <Route exact path='/SequentialNumber' component={() => <SequentialNumber {...props} />} />
                   <Route exact path="/fvp/:id" component={Query} />
+                  <Route exact path='/Scheduled' component={() => <Scheduled {...props} />} />
+                  <Route exact path='/Dummy' component={() => <Dummy {...props} />} />
+                  <Route exact path='/Keywords' component={() => <Keywords {...props} />} />
                 </Paper>
               </Grid>
             </Grid>
