@@ -157,7 +157,7 @@ const validationSchema =
             var v1 = [];
             if (v.length > 0) {
                 v.map((item) => {
-                    console.log(differenceInDays(new Date(item.Date), new Date()));
+                    //console.log(differenceInDays(new Date(item.Date), new Date()));
                     if (differenceInDays(new Date(item.Date), new Date()) < 2)
                         v1.push(true);
                 });
@@ -249,9 +249,10 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
         if (confirm("Are you sure to submit?")) {
 
             setTimeout(() => {
-                values.MarketingCoordinator = this.FilterKeywords("Marketing Coordinator");
+                //values.MarketingCoordinator = this.FilterKeywords("Marketing Coordinator");
                 values.Action = "submit";
-                console.log(JSON.stringify(values, null, 2));
+                values.Status = "Submitted";
+                //console.log("Submitted values is " + JSON.stringify(values, null, 2));
                 //values.SubmittedDate = new Date().toLocaleString();
                 setSubmitting(false);
                 if (values.ID != null) {
@@ -262,15 +263,17 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                 //alert("Submitted successfully!");
                 resetForm();
                 this.props.closeForm();
-            }, 5000);
+            }, 0);
         }
         else
             setSubmitting(false);
     }
     private onSave(formik): void {
         if (confirm("Are you sure to save?")) {
+            //formik.values.MarketingCoordinator = this.FilterKeywords("Marketing Coordinator");
             formik.values.Action = "save";
-            console.log(JSON.stringify(formik.values, null, 2));
+            formik.values.CurrentHandler = this.props.context.pageContext.user.email;
+            //console.log("Saved values is " + JSON.stringify(formik.values, null, 2));
             setTimeout(() => {
                 formik.setSubmitting(false);
                 if (formik.values.ID != null) {
@@ -280,7 +283,7 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                     this._fvpservice.createItem("FVP", formik.values, this.state.fileinfos).then(() => { this.props.refreshData(); });
                 formik.resetForm();
                 this.props.closeForm();
-            }, 1000);
+            }, 0);
         }
         else
             formik.setSubmitting(false);
@@ -307,7 +310,6 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
     private onApprove(formik): void {
         formik.values.Action = "approve";
         formik.submitForm();
-
     }
 
     private addFile = (event) => {
@@ -374,7 +376,7 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                     <Toolbar>
 
                                         <Typography noWrap={true} variant="subtitle1" className={classes.title}>Facility Visit Program Form</Typography>
-                                        <Button
+                                        {((formik.values.CurrentHandler == this.props.context.pageContext.user.email) && formik.values.Status == "Draft") ? <div><Button
                                             autoFocus
                                             size="small"
                                             color="inherit"
@@ -391,18 +393,18 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                             }}
                                         >
                                             Submit  </Button>
-                                        <Button
-                                            autoFocus
-                                            size="small"
-                                            className={classes.toolbarButton}
-                                            startIcon={saveIcon}
-                                            color="inherit"
-                                            disabled={!this.props.editForm || formik.isSubmitting}
-                                            onClick={() => { formik.setSubmitting(true); this.onSave(formik); }}
-                                        >
-                                            Save  </Button>
+                                            <Button
+                                                autoFocus
+                                                size="small"
+                                                className={classes.toolbarButton}
+                                                startIcon={saveIcon}
+                                                color="inherit"
+                                                disabled={!this.props.editForm || formik.isSubmitting}
+                                                onClick={() => { formik.setSubmitting(true); this.onSave(formik); }}
+                                            >
+                                                Save  </Button>
 
-                                        <Button
+                                            {/* <Button
                                             autoFocus
                                             size="small"
                                             className={classes.toolbarButton}
@@ -412,18 +414,18 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                             form="FvpForm"
                                             disabled={!this.props.editForm || formik.isSubmitting}
                                         >
-                                            Reset  </Button>
-                                        <Button
-                                            autoFocus
-                                            className={classes.toolbarButton}
-                                            size="small"
-                                            startIcon={editIcon}
-                                            color="inherit"
-                                            disabled={this.props.editForm || formik.values.Status != "Draft"}
-                                            onClick={this.props.handleEdit}
-                                        >
-                                            Edit  </Button>
-                                        <Button
+                                            Reset  </Button> */}
+                                            <Button
+                                                autoFocus
+                                                className={classes.toolbarButton}
+                                                size="small"
+                                                startIcon={editIcon}
+                                                color="inherit"
+                                                disabled={this.props.editForm || formik.values.Status != "Draft"}
+                                                onClick={this.props.handleEdit}
+                                            >
+                                                Edit  </Button></div> : null}
+                                        {/* <Button
                                             autoFocus
                                             className={classes.toolbarButton}
 
@@ -432,9 +434,32 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                             color="inherit"
                                             disabled={!(!this.props.editForm && ((formik.values.Status.includes("In Progress") && this.props.context.pageContext.user.displayName == formik.values.Applicant) || (this.props.userRoles.indexOf("Admin") != -1 && !formik.values.Status.includes("Cancelled"))))}
                                             onClick={() => { formik.setSubmitting(true); this.onCancel(formik); }}
-                                        >Cancel</Button>
+                                        >Cancel</Button> */}
 
-
+                                        {!this.props.IsAdmin ? null :
+                                            <div>
+                                                <Button
+                                                    autoFocus
+                                                    size="small"
+                                                    className={classes.toolbarButton}
+                                                    startIcon={saveIcon}
+                                                    color="inherit"
+                                                    disabled={!this.props.editForm || formik.isSubmitting}
+                                                    onClick={() => { formik.setSubmitting(true); this.onSave(formik); }}
+                                                >
+                                                    Save by Owner </Button>
+                                                <Button
+                                                    autoFocus
+                                                    className={classes.toolbarButton}
+                                                    size="small"
+                                                    startIcon={editIcon}
+                                                    color="inherit"
+                                                    disabled={this.props.editForm }
+                                                    onClick={this.props.handleEdit}
+                                                >
+                                                    Edit by Owner  </Button>
+                                            </div>
+                                        }
                                         <Button
                                             autoFocus
                                             className={classes.toolbarButton}
@@ -854,7 +879,9 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                     </Grid>
 
                                     <Grid item xs={12} sm={12}>
-                                        <Field name="TourPlan">
+                                        <Field
+                                            name="TourPlan"
+                                        >
                                             {(fieldProps) => {
                                                 if (this.props.editForm)
                                                     return (
@@ -866,7 +893,6 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                             error={formik.errors.TourPlan && formik.touched.TourPlan
                                                                 ? formik.errors.TourPlan
                                                                 : null}
-
                                                         />
                                                     );
                                                 else
@@ -876,7 +902,6 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                             setFieldValue={fieldProps.form.setFieldValue}
                                                             fieldName="TourPlan"
                                                             LocationOptions={this.props.LocationOptions}
-
                                                         />
                                                     );
                                             }}

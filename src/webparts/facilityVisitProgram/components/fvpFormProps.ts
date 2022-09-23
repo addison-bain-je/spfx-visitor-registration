@@ -14,6 +14,7 @@ export interface fvpFormProps {
     LocationOptions: LocationItem[]; 
     userRoles: string[];
     keywords: KeywordItem[];
+    IsAdmin: boolean;
     // VisitorTypeOptions: SelectOptionItem[];
     // SalesRegionOptions: SelectOptionItem[];
     // BUOptions: SelectOptionItem[];

@@ -240,6 +240,8 @@ export default function TourPlan(props) {
                 className={classes.dialogroot}
                 open={showDialog}
                 TransitionComponent={Transition}
+                fullWidth={true}
+                maxWidth={"md"}
             >
                 <DialogTitle>Tour Plan</DialogTitle>
                 <DialogContent>
@@ -252,7 +254,7 @@ export default function TourPlan(props) {
                         LocationOptions={props.LocationOptions}
                     />
                 </DialogContent>
-                
+
             </MuiDialog>
         </>
     );
