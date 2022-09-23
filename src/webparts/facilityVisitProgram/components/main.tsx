@@ -1,7 +1,7 @@
 import * as React from 'react';
 import clsx from 'clsx';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
+//import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -16,45 +16,46 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import HomeIcon from '@material-ui/icons/Home';
-import PieIcon from '@material-ui/icons/PieChartOutlined';
-import SupervisorIcon from '@material-ui/icons/SupervisorAccount';
-import PersonIcon from '@material-ui/icons/Person';
+// import PieIcon from '@material-ui/icons/PieChartOutlined';
+// import SupervisorIcon from '@material-ui/icons/SupervisorAccount';
+// import PersonIcon from '@material-ui/icons/Person';
 import HighQualityIcon from '@material-ui/icons/HighQuality';
-import PersonPinIcon from '@material-ui/icons/PersonPinCircle';
+//import PersonPinIcon from '@material-ui/icons/PersonPinCircle';
 import AppsIcon from '@material-ui/icons/Apps';
 import LocationIcon from '@material-ui/icons/LocationOn';
-import ListIcon from '@material-ui/icons/List';
-import BusinessIcon from '@material-ui/icons/Business';
-import BusinesssCenterIcon from '@material-ui/icons/BusinessCenter';
-import BusinesssCenterIcon1 from '@material-ui/icons/BusinessCenterOutlined';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
+// import ListIcon from '@material-ui/icons/List';
+// import BusinessIcon from '@material-ui/icons/Business';
+// import BusinesssCenterIcon from '@material-ui/icons/BusinessCenter';
+// import BusinesssCenterIcon1 from '@material-ui/icons/BusinessCenterOutlined';
+// import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import GroupWorkIcon from '@material-ui/icons/GroupWork';
-import BUSegIcon from '@material-ui/icons/AccountBalance';
+//import GroupWorkIcon from '@material-ui/icons/GroupWork';
+//import BUSegIcon from '@material-ui/icons/AccountBalance';
 import Container from '@material-ui/core/Container';
 import KeyIcon from '@material-ui/icons/VpnKey';
 import Grid from '@material-ui/core/Grid';
 import { Route, Link, BrowserRouter as Router, HashRouter } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import DataTable from './DataTable';
-import BU from './BU';
-import BUSegment from './BUSegment';
-import SalesRegion from './SalesRegion';
+//import BU from './BU';
+//import BUSegment from './BUSegment';
+//import SalesRegion from './SalesRegion';
 import Location from './Location';
-import VisitorType from './VisitorType';
-import SubVisitorType from './SubVisitorType';
-import FinalApprover from './FinalApprover';
-import MotorSeries from './MotorSeries';
+//import VisitorType from './VisitorType';
+// import SubVisitorType from './SubVisitorType';
+// import FinalApprover from './FinalApprover';
+// import MotorSeries from './MotorSeries';
 import Application from './Application';
-import MarketingCoordinator from './MarketingCoordinator';
-import Role from './Role';
-import GroupRole from './GroupRole';
-import CEO from './CEO';
+// import MarketingCoordinator from './MarketingCoordinator';
+// import Role from './Role';
+// import GroupRole from './GroupRole';
+// import CEO from './CEO';
 import QualityAuditApprover from './QualityAuditApprover';
 import SequentialNumber from './SequentialNumber';
 import Keywords from './Keywords';
 import QueryFvp from './QueryFvp';
 import Scheduled from './Scheduled';
+import QueryByID from './QueryByID';
 import { Button, Tooltip } from '@material-ui/core';
 import Dummy from './Dummy';
 import orange from '@material-ui/core/colors/orange';
@@ -164,10 +165,13 @@ export default function Main(props) {
   };
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
   const Query = (queryprops) => {
     return (<QueryFvp id={queryprops.match.params.id} context={props.context} />);
   };
-
+  const FVPQuery = (queryprops) => {
+    return (<QueryByID id={queryprops.match.params.id} context={props.context} {...props} />);
+  };
 
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -239,15 +243,15 @@ export default function Main(props) {
                 <ListItemText primary="Scheduled"></ListItemText>
               </ListItem>
               <ListItem className={classes.ListItem} button component={Link} to='/Location'
-                  selected={selectedIndex === 2}
-                  onClick={(event) => handleListItemClick(event, 2)}>
-                  <Tooltip title="Location">
-                    <ListItemIcon className={classes.ListItem}>
-                      <LocationIcon />
-                    </ListItemIcon>
-                  </Tooltip>
-                  <ListItemText primary="Location"></ListItemText>
-                </ListItem>
+                selected={selectedIndex === 2}
+                onClick={(event) => handleListItemClick(event, 2)}>
+                <Tooltip title="Location">
+                  <ListItemIcon className={classes.ListItem}>
+                    <LocationIcon />
+                  </ListItemIcon>
+                </Tooltip>
+                <ListItemText primary="Location"></ListItemText>
+              </ListItem>
               {!props.IsAdmin ? null : <div>
                 <Divider />
                 <ListItem className={classes.ListItem} button component={Link} to='/Keywords'
@@ -279,7 +283,7 @@ export default function Main(props) {
                     </ListItemIcon>
                   </Tooltip>
                   <ListItemText primary="Application"></ListItemText>
-                </ListItem> 
+                </ListItem>
                 <ListItem className={classes.ListItem} button component={Link} to='/SequentialNumber'
                   selected={selectedIndex === 6}
                   onClick={(event) => handleListItemClick(event, 6)}>
@@ -289,7 +293,7 @@ export default function Main(props) {
                     </ListItemIcon>
                   </Tooltip>
                   <ListItemText primary="Sequential Number"></ListItemText>
-                </ListItem>       
+                </ListItem>
               </div>}
 
             </List>
@@ -309,7 +313,8 @@ export default function Main(props) {
                   <Route exact path='/QualityAuditApprover' component={() => <QualityAuditApprover {...props} />} />
                   <Route exact path='/Application' component={() => <Application {...props} />} />
                   <Route exact path='/SequentialNumber' component={() => <SequentialNumber {...props} />} />
-                  <Route exact path="/fvp/:id" component={Query} />
+                  {/* <Route exact path="/fvp/:id" component={Query} /> */}
+                  <Route exact path="/fvp/:id" component={FVPQuery} />
                 </Paper>
               </Grid>
             </Grid>

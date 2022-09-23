@@ -67,7 +67,7 @@ interface IProps {
   context: WebPartContext;
   classes?: any;
   userRoles: string[];
-
+  IsAdmin: boolean;
 }
 const groupByFields: IGrouping[] = [{
   name: 'BU',
@@ -123,6 +123,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         VisitorDetails: '',
         TourPlan: '',
         Action: '',
+        CurrentHandler: this.props.context.pageContext.user.email,
       },
     };
     this._fvpService = new fvpService(props.context, props.context.pageContext);
@@ -135,7 +136,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         isResizable: true,
         linkPropertyName: 'RequestNo.ServerRelativeUrl',
         sorting: true,
-        minWidth: 150,
+        minWidth: 80,
         maxWidth: 150,
         render: (item: any) => {
           return <Link style={{ color: 'orange' }}
@@ -150,23 +151,27 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         displayName: 'Applicant',
         isResizable: true,
         sorting: true,
-        minWidth: 150,
-        maxWidth: 250
+        minWidth: 80,
+        maxWidth: 150
       },
       {
         name: 'Status',
         displayName: 'Status',
         isResizable: true,
         sorting: true,
-        minWidth: 150,
-        maxWidth: 150
+        minWidth: 130,
+        maxWidth: 150,
+        render: (item: any) => {
+          return (<Tooltip title={item['Status']} arrow><div>
+            {item['Status']}</div></Tooltip>);
+        }
       },
       {
         name: 'BU',
         displayName: 'BU',
         isResizable: true,
         sorting: true,
-        minWidth: 150,
+        minWidth: 130,
         maxWidth: 150,
         render: (item: any) => {
           if (item['BU']) {
@@ -182,7 +187,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         displayName: 'Sales Region',
         isResizable: true,
         sorting: true,
-        minWidth: 150,
+        minWidth: 130,
         maxWidth: 150,
         render: (item: any) => {
           if (item['SalesRegion']) {
@@ -199,7 +204,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         displayName: 'Application',
         isResizable: true,
         sorting: true,
-        minWidth: 150,
+        minWidth: 130,
         maxWidth: 150,
         render: (item: any) => {
           if (item['Application']) {
@@ -215,7 +220,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         displayName: 'Visitor Type',
         isResizable: true,
         sorting: true,
-        minWidth: 150,
+        minWidth: 130,
         maxWidth: 150,
       },
       {
@@ -223,7 +228,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         displayName: 'Visiting Purpose',
         isResizable: true,
         sorting: true,
-        minWidth: 150,
+        minWidth: 130,
         maxWidth: 150,
 
       },
@@ -232,7 +237,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         displayName: 'Created Date',
         isResizable: true,
         sorting: true,
-        minWidth: 150,
+        minWidth: 130,
         maxWidth: 150,
 
       },
@@ -241,7 +246,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         displayName: 'Current Approver',
         isResizable: true,
         sorting: true,
-        minWidth: 150,
+        minWidth: 130,
         maxWidth: 150,
 
       },
@@ -250,11 +255,27 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         displayName: 'Submitted Date',
         isResizable: true,
         sorting: true,
-        minWidth: 150,
+        minWidth: 130,
         maxWidth: 150,
 
       },
-
+      {
+        name: 'TourPlan',
+        displayName: 'Visit Time',
+        isResizable: true,
+        sorting: true,
+        minWidth: 180,
+        maxWidth: 200,
+        render: (item: any) => {
+          //console.log("TourPlan is "+item['TourPlan']);
+          if (item['TourPlan']) {
+            return (<div>{JSON.parse(item['TourPlan'])[0]['Date']}-{JSON.parse(item['TourPlan'])[JSON.parse(item['TourPlan']).length - 1]['Date']} </div>);
+          }
+          else {
+            return '';
+          }
+        }
+      },
     ];
 
 
@@ -493,6 +514,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         VisitorDetails: '',
         TourPlan: '',
         Action: '',
+        CurrentHandler: this.props.context.pageContext.user.email,
       }
     });
   }
@@ -538,14 +560,15 @@ class DataTable extends React.Component<IProps, IDataTableState>{
                 ApplicationOptions={this.state.ApplicationOptions}
                 LocationOptions={this.state.LocationOptions}
                 keywords={this.state.Keywords}
-                // VisitorTypeOptions={this.state.VisitorTypeOptions}
-                // SalesRegionOptions={this.state.SalesRegionOptions}
-                // BUOptions={this.state.BUOptions}
-                // VisitingPurposeOptions={this.state.VisitingPurposeOptions}
-                // MotorSeriesOptions={this.state.MotorSeriesOptions}
-                // MarketingCoordinator={this.state.MarketingCoordinator}
-                // FinalApproverOptions={this.state.FinalApproverOptions}
-                // BUSegmentOptions={this.state.BUSegmentOptions}               
+                IsAdmin={this.props.IsAdmin}
+              // VisitorTypeOptions={this.state.VisitorTypeOptions}
+              // SalesRegionOptions={this.state.SalesRegionOptions}
+              // BUOptions={this.state.BUOptions}
+              // VisitingPurposeOptions={this.state.VisitingPurposeOptions}
+              // MotorSeriesOptions={this.state.MotorSeriesOptions}
+              // MarketingCoordinator={this.state.MarketingCoordinator}
+              // FinalApproverOptions={this.state.FinalApproverOptions}
+              // BUSegmentOptions={this.state.BUSegmentOptions}               
               />
             </DialogContent>
             <DialogActions>

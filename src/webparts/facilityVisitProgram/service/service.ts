@@ -34,6 +34,14 @@ export class service {
         });
     }
 
+    public async getListID(listname: string): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            sp.web.lists.getByTitle(listname).get().then((l) => {
+                resolve(l.Id);
+            });
+        });
+    }
+
     public async filterItems(listname: string, selectFields: string[]): Promise<any[]> {
         return new Promise<any[]>(async (resolve, reject) => {
             sp.web.lists.getByTitle(listname).items.select(selectFields.toString()).getAll().then((items) => {
@@ -42,20 +50,23 @@ export class service {
         });
     }
     public async createItem(listname: string, values: any): Promise<any> {
+        var r: any;
         return new Promise<any>(async (resolve, reject) => {
-            sp.web.lists.getByTitle(listname).items.add(values).then(() => { resolve(); });
+            sp.web.lists.getByTitle(listname).items.add(values).then(() => { resolve(r); });
         });
     }
-
+  
     public async updateItem(listname: string, values: any, id: number): Promise<any> {
+        var r: any;
         return new Promise<any>(async (resolve, reject) => {
-            sp.web.lists.getByTitle(listname).items.getById(Number(id)).update(values).then(() => { resolve(); });
+            sp.web.lists.getByTitle(listname).items.getById(Number(id)).update(values).then(() => { resolve(r); });
         });
 
     }
     public async deleteItem(listname: string, ID: number): Promise<any> {
+        var r: any;
         return new Promise<any>(async (resolve, reject) => {
-            sp.web.lists.getByTitle(listname).items.getById(Number(ID)).delete().then(() => { resolve(); });
+            sp.web.lists.getByTitle(listname).items.getById(Number(ID)).delete().then(() => { resolve(r); });
         });
     }
     public async getAllGroups(): Promise<any> {

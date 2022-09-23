@@ -4,31 +4,29 @@ export interface fvpItem {
     RequestNo?: string;
     Status?: string;
     BU?: string;
-    BUDescription?: string;
+    //BUDescription?: string;
     BUSegment?: string;
-    BUSegmentDescription?: string;
+    //BUSegmentDescription?: string;
     VisitorType?: string;
-    VisitorTypeDescription?: string;
+    //VisitorTypeDescription?: string;
     SalesRegion?: string;
-    SalesRegionDescription?: string;
+    //SalesRegionDescription?: string;
     VisitingPurpose?: string;
-    VisitingPurposeDescription?: string;
+    //VisitingPurposeDescription?: string;
     //MotorSeries?: string;
     //MotorSeriesDescription?: string;
     Application?: string;
-    ApplicationDescription?: string;
+    //ApplicationDescription?: string;
     Applicant?: string;
     MarketingCoordinator?: string;
-    MarketingCoordinatorDescription?: string;
+    //MarketingCoordinatorDescription?: string;
     FinalApprover?: string;
-    FinalApproverDescription?: string;
+    //FinalApproverDescription?: string;
     GenerateRemark?: string;
-
     HostName?: string;
     HostContactNo?: string;
     HostJobTitleDept?: string;
     Others?: string;
-
     VisitorDetails?: string;
     TourPlan?: string;
     ApprovalHistory?: string;
@@ -36,6 +34,7 @@ export interface fvpItem {
     CreatedDate?: string;
     SubmittedDate?: string;
     CurrentHandler?: string;
+    Title?: string;
 }
 export interface HostItem {
     JohnsonHostName: string;

@@ -23,8 +23,10 @@ export class fvpService {
             sp.web.lists.getByTitle(listname).get().then((l) => {
                 // console.log("listID is " + l.Id);
                 result.listID = l.Id;
-                sp.web.lists.getByTitle(listname).items.getAll().then((items) => {
+                //sp.web.lists.getByTitle(listname).items.getAll().then((items) => {
+                sp.web.lists.getByTitle(listname).items.orderBy('ID',false).top(5000).get().then((items) => {
                     items.map((item) => {
+                        //console.log("FVP is "+ JSON.stringify(items,null,2));
                         result.FvpItem.push({
                             Applicant: item.Applicant,
                             BU: item.BU,
@@ -41,6 +43,7 @@ export class fvpService {
                             CreatedDate: new Date(item.Created).toLocaleString(),
                             SubmittedDate: item.SubmittedDate,
                             CurrentHandler: item.CurrentHandler,
+                            TourPlan: item.TourPlan,
                         });
                     });
                     resolve(result);
@@ -59,31 +62,32 @@ export class fvpService {
 
     }
     public createItem(listname: string, values: fvpItem, attFile: []): Promise<any> {
+        var rs: any;
         return new Promise<any>(async (resolve, reject) => {
             sp.web.lists.getByTitle(listname).items.add({
                 Applicant: values.Applicant,
                 MarketingCoordinator: values.MarketingCoordinator,
-                MarketingCoordinatorDescription: values.MarketingCoordinatorDescription,
+                //MarketingCoordinatorDescription: values.MarketingCoordinatorDescription,
                 FinalApprover: values.FinalApprover,
-                FinalApproverDescription: values.FinalApproverDescription,
+                //FinalApproverDescription: values.FinalApproverDescription,
                 GenerateRemark: values.GenerateRemark,
                 ApplicantContactNumber: values.ApplicantContactNumber,
                 BU: values.BU,
-                BUDescription: values.BUDescription,
+                //BUDescription: values.BUDescription,
                 BUSegment: values.BUSegment,
-                BUSegmentDescription: values.BUSegmentDescription,
+                //BUSegmentDescription: values.BUSegmentDescription,
                 RequestNo: values.RequestNo,
                 SalesRegion: values.SalesRegion,
-                SalesRegionDescription: values.SalesRegionDescription,
+                //SalesRegionDescription: values.SalesRegionDescription,
                 VisitorType: values.VisitorType,
-                VisitorTypeDescription: values.VisitorTypeDescription,
+                //VisitorTypeDescription: values.VisitorTypeDescription,
                 VisitingPurpose: values.VisitingPurpose,
-                VisitingPurposeDescription: values.VisitingPurposeDescription,
+                //VisitingPurposeDescription: values.VisitingPurposeDescription,
                 Status: values.Status,
                 //MotorSeries: values.MotorSeries,
                 //MotorSeriesDescription: values.MotorSeriesDescription,
                 Application: values.Application,
-                ApplicationDescription: values.ApplicationDescription,
+                //ApplicationDescription: values.ApplicationDescription,
                 HostName: values.HostName,
                 HostContactNo: values.HostContactNo,
                 HostJobTitleDept: values.HostJobTitleDept,
@@ -92,38 +96,42 @@ export class fvpService {
                 TourPlan: values.TourPlan,
                 Action: values.Action,
                 SubmittedDate: values.SubmittedDate,
+                CurrentHandler: values.CurrentHandler,
+                Title: 'Done',
 
-            }).then((r) => { r.item.attachmentFiles.addMultiple(attFile); }).then(() => { resolve(); });
+            }).then((r) => { r.item.attachmentFiles.addMultiple(attFile); }).then(() => { resolve(rs); });
         });
     }
 
-    public updateItem(listname: string, values): Promise<any> {
+    public updateItem(listname: string, values: fvpItem): Promise<any> {
+        var r: any;
+        //console.log("UpdateItem is "+JSON.stringify(values, null, 2));
         return new Promise<any>(async (resolve, reject) => {
             sp.web.lists.getByTitle(listname).items.getById(values.ID).update({
                 Applicant: values.Applicant,
                 MarketingCoordinator: values.MarketingCoordinator,
-                MarketingCoordinatorDescription: values.MarketingCoordinatorDescription,
+                //MarketingCoordinatorDescription: values.MarketingCoordinatorDescription,
                 FinalApprover: values.FinalApprover,
-                FinalApproverDescription: values.FinalApproverDescription,
+                //FinalApproverDescription: values.FinalApproverDescription,
                 GenerateRemark: values.GenerateRemark,
                 ApplicantContactNumber: values.ApplicantContactNumber,
                 BU: values.BU,
-                BUDescription: values.BUDescription,
+                //BUDescription: values.BUDescription,
                 BUSegment: values.BUSegment,
-                BUSegmentDescription: values.BUSegmentDescription,
+                //BUSegmentDescription: values.BUSegmentDescription,
                 RequestNo: values.RequestNo,
                 SalesRegion: values.SalesRegion,
-                SalesRegionDescription: values.SalesRegionDescription,
+                //SalesRegionDescription: values.SalesRegionDescription,
                 VisitorType: values.VisitorType,
-                VisitorTypeDescription: values.VisitorTypeDescription,
+                //VisitorTypeDescription: values.VisitorTypeDescription,
                 //SubVisitorType: values.SubVisitorType,
                 //SubVisitorTypeDescription: values.SubVisitorTypeDescription,
                 Status: values.Status,
                 VisitingPurpose: values.VisitingPurpose,
-                MotorSeries: values.MotorSeries,
-                MotorSeriesDescription: values.MotorSeriesDescription,
+                //MotorSeries: values.MotorSeries,
+                //MotorSeriesDescription: values.MotorSeriesDescription,
                 Application: values.Application,
-                ApplicationDescription: values.ApplicationDescription,
+                //ApplicationDescription: values.ApplicationDescription,
                 HostName: values.HostName,
                 HostContactNo: values.HostContactNo,
                 HostJobTitleDept: values.HostJobTitleDept,
@@ -131,14 +139,18 @@ export class fvpService {
                 VisitorDetails: values.VisitorDetails,
                 TourPlan: values.TourPlan,
                 Action: values.Action,
-            }).then(() => { resolve(); });
+                SubmittedDate: values.SubmittedDate,
+                CurrentHandler: values.CurrentHandler,
+                Title: 'Done',
+            }).then(() => { resolve(r); });
         });
 
     }
 
     public deleteItem(listname: string, ID: number): Promise<any> {
+        var r: any;
         return new Promise<any>(async (resolve, reject) => {
-            sp.web.lists.getByTitle(listname).items.getById(ID).delete().then(() => { resolve(); });
+            sp.web.lists.getByTitle(listname).items.getById(ID).delete().then(() => { resolve(r); });
         });
 
 
@@ -151,27 +163,27 @@ export class fvpService {
                     ID: values.ID,
                     Applicant: values.Applicant,
                     MarketingCoordinator: values.MarketingCoordinator,
-                    MarketingCoordinatorDescription: values.MarketingCoordinatorDescription,
+                    //MarketingCoordinatorDescription: values.MarketingCoordinatorDescription,
                     FinalApprover: values.FinalApprover,
-                    FinalApproverDescription: values.FinalApproverDescription,
+                    //FinalApproverDescription: values.FinalApproverDescription,
                     GenerateRemark: values.GenerateRemark,
                     ApplicantContactNumber: values.ApplicantContactNumber,
                     BU: values.BU,
-                    BUDescription: values.BUDescription,
+                    //BUDescription: values.BUDescription,
                     BUSegment: values.BUSegment,
-                    BUSegmentDescription: values.BUSegmentDescription,
+                    //BUSegmentDescription: values.BUSegmentDescription,
                     RequestNo: values.RequestNo,
                     SalesRegion: values.SalesRegion,
-                    SalesRegionDescription: values.SalesRegionDescription,
+                    //SalesRegionDescription: values.SalesRegionDescription,
                     VisitorType: values.VisitorType,
-                    VisitorTypeDescription: values.VisitorTypeDescription,
+                    //VisitorTypeDescription: values.VisitorTypeDescription,
                     VisitingPurpose: values.VisitingPurpose,
-                    VisitingPurposeDescription: values.VisitingPurposeDescription,
+                    //VisitingPurposeDescription: values.VisitingPurposeDescription,
                     Status: values.Status,
                     //MotorSeries: values.MotorSeries,
                     //MotorSeriesDescription: values.MotorSeriesDescription,
                     Application: values.Application,
-                    ApplicationDescription: values.ApplicationDescription,
+                    //ApplicationDescription: values.ApplicationDescription,
                     HostName: values.HostName,
                     HostContactNo: values.HostContactNo,
                     HostJobTitleDept: values.HostJobTitleDept,
