@@ -35,6 +35,7 @@ export interface fvpItem {
     SubmittedDate?: string;
     CurrentHandler?: string;
     Title?: string;
+    Product?: string;
 }
 export interface HostItem {
     JohnsonHostName: string;

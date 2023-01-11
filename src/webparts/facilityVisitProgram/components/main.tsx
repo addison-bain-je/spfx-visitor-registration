@@ -242,7 +242,7 @@ export default function Main(props) {
                 </Tooltip>
                 <ListItemText primary="Scheduled"></ListItemText>
               </ListItem>
-              <ListItem className={classes.ListItem} button component={Link} to='/Location'
+              {/* <ListItem className={classes.ListItem} button component={Link} to='/Location'
                 selected={selectedIndex === 2}
                 onClick={(event) => handleListItemClick(event, 2)}>
                 <Tooltip title="Location">
@@ -251,7 +251,7 @@ export default function Main(props) {
                   </ListItemIcon>
                 </Tooltip>
                 <ListItemText primary="Location"></ListItemText>
-              </ListItem>
+              </ListItem> */}
               {!props.IsAdmin ? null : <div>
                 <Divider />
                 <ListItem className={classes.ListItem} button component={Link} to='/Keywords'
@@ -308,7 +308,7 @@ export default function Main(props) {
                 <Paper className={classes.paper}>
                   <Route exact path='/' component={() => <DataTable {...props} />} />
                   <Route exact path='/Scheduled' component={() => <Scheduled {...props} />} />
-                  <Route exact path='/Location' component={() => <Location {...props} />} />
+                  {/* <Route exact path='/Location' component={() => <Location {...props} />} /> */}
                   <Route exact path='/Keywords' component={() => <Keywords {...props} />} />
                   <Route exact path='/QualityAuditApprover' component={() => <QualityAuditApprover {...props} />} />
                   <Route exact path='/Application' component={() => <Application {...props} />} />
