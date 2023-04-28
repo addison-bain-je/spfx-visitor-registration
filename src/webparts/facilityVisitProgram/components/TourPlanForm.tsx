@@ -99,7 +99,8 @@ export default function TourPlanForm(props) {
         if (selectedItem != null) {
             formik.values.Block = selectedItem[0].Block;
             formik.values.Floor = selectedItem[0].Floor;
-            formik.values.VisitArea = selectedItem[0].PlantArea+'-'+selectedItem[0].Department;
+           // formik.values.VisitArea = selectedItem[0].PlantArea+'-'+selectedItem[0].Department;
+           formik.values.VisitArea = selectedItem[0].AreaDescription;
             formik.values.PlantCode = selectedItem[0].Plant;
             formik.values.ExtNo = selectedItem[0].ExtNo;
             formik.values.MobileNo = selectedItem[0].MobileNo;

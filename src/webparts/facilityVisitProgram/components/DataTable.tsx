@@ -124,6 +124,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         TourPlan: '',
         Action: '',
         CurrentHandler: this.props.context.pageContext.user.email,
+        Product: '',
       },
     };
     this._fvpService = new fvpService(props.context, props.context.pageContext);
@@ -139,20 +140,12 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         minWidth: 80,
         maxWidth: 150,
         render: (item: any) => {
-          return <Link style={{ color: 'orange' }}
+          return <Link style={item['Status'] == 'Cancelled' ? { color: 'grey' } : { color: 'orange' }}
             onClick={() => {
               this.openForm("FVP", item['ID'], false);
             }}
           >{(item['RequestNo']) ? item['RequestNo'] : '-----------'}</Link>;
         }
-      },
-      {
-        name: 'Applicant',
-        displayName: 'Applicant',
-        isResizable: true,
-        sorting: true,
-        minWidth: 80,
-        maxWidth: 150
       },
       {
         name: 'Status',
@@ -162,8 +155,60 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         minWidth: 130,
         maxWidth: 150,
         render: (item: any) => {
-          return (<Tooltip title={item['Status']} arrow><div>
-            {item['Status']}</div></Tooltip>);
+          return (<Tooltip title={item['Status']} arrow>
+            <Link style={item['Status'] == 'Cancelled' ? { color: 'grey' } : { color: 'orange' }}
+              onClick={() => {
+                this.openForm("FVP", item['ID'], false);
+              }}
+            >{(item['Status']) ? item['Status'] : '-----------'}</Link></Tooltip>);
+        }
+        // render: (item: any) => {
+        //   return (<Tooltip title={item['Status']} arrow><div>
+        //     {item['Status']}</div></Tooltip>);
+        // }
+      },
+      {
+        name: 'TourPlan',
+        displayName: 'Visit Time',
+        isResizable: true,
+        sorting: true,
+        minWidth: 180,
+        maxWidth: 200,
+        render: (item: any) => {
+          //console.log("TourPlan is "+item['TourPlan']);
+          if (item['TourPlan']) {
+            return (
+              <Link style={item['Status'] == 'Cancelled' ? { color: 'grey' } : { color: 'orange' }}
+                onClick={() => {
+                  this.openForm("FVP", item['ID'], false);
+                }}
+              ><div>
+                  {/* {JSON.parse(item['TourPlan'])[0]['Date']}-{JSON.parse(item['TourPlan'])[JSON.parse(item['TourPlan']).length - 1]['Date']} */}
+                  {JSON.parse(item['TourPlan']).sort((a, b) => (new Date(a.Date)).getTime() - (new Date(b.Date)).getTime())[0]['Date']}-{JSON.parse(item['TourPlan']).sort((a, b) => (new Date(a.Date)).getTime() - (new Date(b.Date)).getTime())[JSON.parse(item['TourPlan']).length - 1]['Date']}
+                  {/* sort((a, b) => (new Date(a.Date)).getTime() - (new Date(b.Date)).getTime())) */}
+                </div>
+              </Link>
+            );
+          }
+          else {
+            return '';
+          }
+        }
+      },
+      {
+        name: 'VisitorDetails',
+        displayName: 'Company Name',
+        isResizable: true,
+        sorting: true,
+        minWidth: 130,
+        maxWidth: 150,
+        render: (item: any) => {
+          if (item['VisitorDetails']) {
+            return (<div>{JSON.parse(item['VisitorDetails'])[0]['CompanyName']} </div>);
+          }
+          else {
+            return '';
+          }
         }
       },
       {
@@ -191,14 +236,21 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         maxWidth: 150,
         render: (item: any) => {
           if (item['SalesRegion']) {
-            return (<Tooltip title={JSON.parse(item['SalesRegion']).join(',')} arrow><div>
-              {JSON.parse(item['SalesRegion']).join(',')}</div></Tooltip>);
+            return (<Tooltip title={JSON.parse(item['SalesRegion']).join(',')} arrow>
+              <Link style={item['Status'] == 'Cancelled' ? { color: 'grey' } : { color: 'orange' }}
+                onClick={() => {
+                  this.openForm("FVP", item['ID'], false);
+                }}>
+                <div>
+                  {JSON.parse(item['SalesRegion']).join(',')}
+                </div>
+              </Link>
+            </Tooltip>);
           }
           else
             return '';
         }
       },
-
       {
         name: 'Application',
         displayName: 'Application',
@@ -233,13 +285,19 @@ class DataTable extends React.Component<IProps, IDataTableState>{
 
       },
       {
-        name: 'CreatedDate',
-        displayName: 'Created Date',
+        name: 'Applicant',
+        displayName: 'Applicant',
         isResizable: true,
         sorting: true,
-        minWidth: 130,
+        minWidth: 80,
         maxWidth: 150,
-
+        render: (item: any) => {
+          return <Link style={item['Status'] == 'Cancelled' ? { color: 'grey' } : { color: 'orange' }}
+            onClick={() => {
+              this.openForm("FVP", item['ID'], false);
+            }}
+          >{(item['Applicant']) ? item['Applicant'] : '-----------'}</Link>;
+        }
       },
       {
         name: 'CurrentHandler',
@@ -258,23 +316,6 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         minWidth: 130,
         maxWidth: 150,
 
-      },
-      {
-        name: 'TourPlan',
-        displayName: 'Visit Time',
-        isResizable: true,
-        sorting: true,
-        minWidth: 180,
-        maxWidth: 200,
-        render: (item: any) => {
-          //console.log("TourPlan is "+item['TourPlan']);
-          if (item['TourPlan']) {
-            return (<div>{JSON.parse(item['TourPlan'])[0]['Date']}-{JSON.parse(item['TourPlan'])[JSON.parse(item['TourPlan']).length - 1]['Date']} </div>);
-          }
-          else {
-            return '';
-          }
-        }
       },
     ];
 
@@ -452,7 +493,8 @@ class DataTable extends React.Component<IProps, IDataTableState>{
 
   private getData(): void {
     this._fvpService.getAllrecords("FVP").then((result: newItem) => {
-      this.setState({ ListData: result.FvpItem });
+      let sortedInput = result.FvpItem.slice().sort((a, b) => b.ID - a.ID);
+      this.setState({ ListData: sortedInput });
       this.setState({ listID: result.listID });
     });
   }
@@ -515,6 +557,7 @@ class DataTable extends React.Component<IProps, IDataTableState>{
         TourPlan: '',
         Action: '',
         CurrentHandler: this.props.context.pageContext.user.email,
+        Product: '',
       }
     });
   }

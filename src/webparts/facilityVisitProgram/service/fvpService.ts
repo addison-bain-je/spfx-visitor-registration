@@ -23,8 +23,8 @@ export class fvpService {
             sp.web.lists.getByTitle(listname).get().then((l) => {
                 // console.log("listID is " + l.Id);
                 result.listID = l.Id;
-                //sp.web.lists.getByTitle(listname).items.getAll().then((items) => {
-                sp.web.lists.getByTitle(listname).items.orderBy('ID',false).top(5000).get().then((items) => {
+                sp.web.lists.getByTitle(listname).items.getAll().then((items) => {
+                //sp.web.lists.getByTitle(listname).items.orderBy('ID',false).top(5000).get().then((items) => {
                     items.map((item) => {
                         //console.log("FVP is "+ JSON.stringify(items,null,2));
                         result.FvpItem.push({
@@ -44,6 +44,8 @@ export class fvpService {
                             SubmittedDate: item.SubmittedDate,
                             CurrentHandler: item.CurrentHandler,
                             TourPlan: item.TourPlan,
+                            VisitorDetails: item.VisitorDetails,
+                            GenerateRemark: item.GenerateRemark,
                         });
                     });
                     resolve(result);
@@ -98,6 +100,7 @@ export class fvpService {
                 SubmittedDate: values.SubmittedDate,
                 CurrentHandler: values.CurrentHandler,
                 Title: 'Done',
+                Product: values.Product,
 
             }).then((r) => { r.item.attachmentFiles.addMultiple(attFile); }).then(() => { resolve(rs); });
         });
@@ -142,6 +145,7 @@ export class fvpService {
                 SubmittedDate: values.SubmittedDate,
                 CurrentHandler: values.CurrentHandler,
                 Title: 'Done',
+                Product: values.Product,
             }).then(() => { resolve(r); });
         });
 
@@ -194,6 +198,7 @@ export class fvpService {
                     SubmittedDate: values.SubmittedDate,
                     CurrentHandler: values.CurrentHandler,
                     ApprovalHistory: values.ApprovalHistory,
+                    Product: values.Product,
                 };
                 resolve(result);
             });

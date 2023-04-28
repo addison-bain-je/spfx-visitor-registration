@@ -16,6 +16,8 @@ import { TransitionProps } from '@material-ui/core/transitions';
 import TourPlanForm from './TourPlanForm';
 import Check from "@material-ui/icons/Check";
 import Clear from "@material-ui/icons/Clear";
+import dateformat from 'date-fns/format';
+
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
         width: '100%',
@@ -98,8 +100,8 @@ export default function TourPlan_Read(props) {
 
 
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+    //const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(20);
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
@@ -156,9 +158,9 @@ export default function TourPlan_Read(props) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {state.data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                                    {(state.data.length > 0 ? state.data.sort((a, b) => (new Date(a.Date)).getTime() - (new Date(b.Date)).getTime()) : state.data).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                                         <TableRow>
-                                            <TableCell align="left">{row.Date}</TableCell>
+                                            <TableCell align="left">{dateformat(new Date(row.Date), 'MM/dd/yyyy')}</TableCell>
                                             <TableCell align="left">{row.sTime+"--"+row.eTime}</TableCell>
                                             <TableCell align="left">{row.VisitArea}</TableCell>
                                             <TableCell align="left">{row.PlantCode}</TableCell>

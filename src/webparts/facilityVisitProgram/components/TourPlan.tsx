@@ -16,6 +16,7 @@ import { TransitionProps } from '@material-ui/core/transitions';
 import TourPlanForm from './TourPlanForm';
 import { FormControl, FormHelperText } from '@material-ui/core';
 import { orange } from "@material-ui/core/colors";
+import dateformat from 'date-fns/format';
 const useStyles = makeStyles((theme: Theme) => createStyles({
     root: {
         width: '100%',
@@ -115,8 +116,8 @@ export default function TourPlan(props) {
 
 
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+    //const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(20);
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
@@ -195,7 +196,33 @@ export default function TourPlan(props) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {state.data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                                    {(state.data.length > 0 ? state.data.sort((a, b) => (new Date(a.Date)).getTime() - (new Date(b.Date)).getTime()) : state.data).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                                        <TableRow hover key={row.Date + row.sTime + row.eTime + row.VisitArea}>
+                                            <TableCell align="left">{dateformat(new Date(row.Date), 'MM/dd/yyyy')}</TableCell>
+                                            <TableCell align="left">{row.sTime + "--" + row.eTime}</TableCell>
+                                            <TableCell align="left">{row.VisitArea}</TableCell>
+                                            <TableCell align="left">{row.PlantCode}</TableCell>
+                                            <TableCell align="left">{row.Block}</TableCell>
+                                            <TableCell align="left">{row.Floor}</TableCell>
+                                            <TableCell align="left">{row.Torguide}</TableCell>
+                                            <TableCell align="left">{row.ExtNo}</TableCell>
+                                            <TableCell align="left">{row.MobileNo}</TableCell>
+                                            <TableCell align="left">{row.LocationApprover}</TableCell>
+                                            <TableCell align="left">
+                                                <Grid container>
+                                                    <Grid item>
+                                                        <IconButton size="small" >
+                                                            <Edit fontSize="small" onClick={() => { setItemDetails(row); setEdit(true); setOpen(); }} />
+                                                        </IconButton>
+                                                        <IconButton size="small" >
+                                                            <DeleteOutline fontSize="small" onClick={() => { onRowDelete(row); }} />
+                                                        </IconButton>
+                                                    </Grid>
+                                                </Grid>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                    {/* {state.data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                                         <TableRow hover key={row.Date + row.sTime + row.eTime + row.VisitArea}>
                                             <TableCell align="left">{row.Date}</TableCell>
                                             <TableCell align="left">{row.sTime + "--" + row.eTime}</TableCell>
@@ -220,7 +247,7 @@ export default function TourPlan(props) {
                                                 </Grid>
                                             </TableCell>
                                         </TableRow>
-                                    ))}
+                                    ))} */}
                                 </TableBody>
                             </Table>
                         </TableContainer>

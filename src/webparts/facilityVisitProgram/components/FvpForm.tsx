@@ -119,7 +119,15 @@ const initializeValues = (value) => {
         return ([]);
 };
 
-
+// const objComparator = function (a, b) {
+//     if (a.id < b.id) {
+//         return -1;
+//     }
+//     if (a.id > b.id) {
+//         return 1;
+//     }
+//     return 0;
+// };
 
 const validationSchema =
     Yup.object({
@@ -127,6 +135,7 @@ const validationSchema =
         BU: Yup.string().required("required").nullable(),
         BUSegment: Yup.string().required("required").nullable(),
         SalesRegion: Yup.string().required("required").nullable(),
+        GenerateRemark: Yup.string().required("required").nullable(),
         VisitorType: Yup.string()
             .required('required').nullable(),
         // VisitorTypeDescription: Yup.string()
@@ -292,7 +301,9 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
     private onCancel(formik): void {
         if (confirm("Are you sure to cancel?")) {
             formik.values.Action = "cancel";
-            console.log(JSON.stringify(formik.values, null, 2));
+            formik.values.Status = "Cancelled";
+            formik.values.CurrentHandler = "";
+         //   console.log(JSON.stringify(formik.values, null, 2));
             setTimeout(() => {
                 formik.setSubmitting(false);
                 this._fvpservice.updateItem("FVP", formik.values).then(() => { this.props.refreshData(); });
@@ -305,12 +316,28 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
             formik.setSubmitting(false);
     }
 
-
-
     private onApprove(formik): void {
-        formik.values.Action = "approve";
-        formik.submitForm();
+        if (confirm("Are you sure to approve?")) {
+            formik.values.Action = "onapprove";
+            formik.values.Status = "Ready";
+            formik.values.CurrentHandler = "";
+           // console.log(JSON.stringify(formik.values, null, 2));
+            setTimeout(() => {
+                formik.setSubmitting(false);
+                this._fvpservice.updateItem("FVP", formik.values).then(() => { this.props.refreshData(); });
+                formik.resetForm();
+                this.props.closeForm();
+                formik.setSubmitting(false);
+            }, 1000);
+        }
+        else
+            formik.setSubmitting(false);
     }
+
+    // private onApprove(formik): void {
+    //     formik.values.Action = "approve";
+    //     formik.submitForm();
+    // }
 
     private addFile = (event) => {
         //Push file name and content into the array of fileinfos
@@ -435,9 +462,45 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                             disabled={!(!this.props.editForm && ((formik.values.Status.includes("In Progress") && this.props.context.pageContext.user.displayName == formik.values.Applicant) || (this.props.userRoles.indexOf("Admin") != -1 && !formik.values.Status.includes("Cancelled"))))}
                                             onClick={() => { formik.setSubmitting(true); this.onCancel(formik); }}
                                         >Cancel</Button> */}
-
+                                        {!(this.props.context.pageContext.user.displayName == formik.values.Applicant) ? null :
+                                            <div>
+                                                {formik.values.Status == "Cancelled" ? null :
+                                                    <Button
+                                                        autoFocus
+                                                        className={classes.toolbarButton}
+                                                        size="small"
+                                                        startIcon={cancelIcon}
+                                                        color="inherit"
+                                                        //disabled={!this.props.editForm || formik.isSubmitting}
+                                                        disabled={false}
+                                                        onClick={() => { formik.setSubmitting(true); this.onCancel(formik); }}
+                                                    >Cancel</Button>
+                                                }
+                                            </div>}
                                         {!this.props.IsAdmin ? null :
                                             <div>
+                                                {formik.values.Status != "Draft" ? null :
+                                                    <Button
+                                                        autoFocus
+                                                        className={classes.toolbarButton}
+                                                        size="small"
+                                                        startIcon={submitIcon}
+                                                        color="inherit"
+                                                        disabled={!this.props.editForm || formik.isSubmitting}
+                                                        onClick={() => { formik.setSubmitting(true); this.onApprove(formik); }}
+                                                    >Approve</Button>
+                                                }
+                                                {formik.values.Status == "Cancelled" ? null :
+                                                    <Button
+                                                        autoFocus
+                                                        className={classes.toolbarButton}
+                                                        size="small"
+                                                        startIcon={cancelIcon}
+                                                        color="inherit"
+                                                        disabled={!this.props.editForm || formik.isSubmitting}
+                                                        onClick={() => { formik.setSubmitting(true); this.onCancel(formik); }}
+                                                    >Cancel</Button>
+                                                }
                                                 <Button
                                                     autoFocus
                                                     size="small"
@@ -454,7 +517,7 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                     size="small"
                                                     startIcon={editIcon}
                                                     color="inherit"
-                                                    disabled={this.props.editForm }
+                                                    disabled={this.props.editForm}
                                                     onClick={this.props.handleEdit}
                                                 >
                                                     Edit by Owner  </Button>
@@ -625,6 +688,25 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                     label={"Visiting Purpose"}
                                                     className={classes.controlLabel}
                                                 />
+                                                <div>
+                                                    <FormControlLabel
+                                                        control={<Field
+                                                            as={TextField}
+                                                            name="Product"
+                                                            variant="outlined"
+                                                            error={formik.errors.Product && formik.touched.Product
+                                                                ? formik.errors.Product
+                                                                : null}
+                                                            helperText={formik.errors.Product}
+                                                            disabled={!this.props.editForm}
+                                                        // multiline
+                                                        // rows={3}
+                                                        />}
+                                                        labelPlacement="start"
+                                                        label={"Product"}
+                                                        className={classes.controlLabel}
+                                                    />
+                                                </div>
                                                 <Grid item>
                                                     <Tooltip title={formik.values.Application ? formik.values.Application : "Empty"} arrow placement="right">
                                                         <div>
@@ -669,12 +751,13 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                                 : null}
                                                             helperText={formik.errors.GenerateRemark}
                                                             disabled={!this.props.editForm}
+                                                            multiline
+                                                            rows={3}
                                                         />}
                                                         labelPlacement="start"
-                                                        label={"Additional information"}
+                                                        label={"Visit purpose details"}
                                                         className={classes.controlLabel}
                                                     />
-
                                                 </div>
                                             </Paper>
                                             <FormControlLabel
