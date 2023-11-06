@@ -36,6 +36,9 @@ export interface fvpItem {
     CurrentHandler?: string;
     Title?: string;
     Product?: string;
+    ApplicantEmail?: string;
+    FVPVersion?: string;
+    ApplicantComments?: string;
 }
 export interface HostItem {
     JohnsonHostName: string;
@@ -79,6 +82,7 @@ export interface LocationItem {
     PMSession?: string;
     LocationApprover?: string;
     HasRestrictArea?: string;
+    LocationApproverEmail?: string;
 }
 export interface BUItem {
     ID?: string;
@@ -154,6 +158,7 @@ export interface QualityAuditApproverItem {
     ID: string;
     AuditApprover: string;
     QualityAuditType: string;
+    AuditApproverEmail?: string;
 }
 export interface SequentialNumberItem {
     ID: string;

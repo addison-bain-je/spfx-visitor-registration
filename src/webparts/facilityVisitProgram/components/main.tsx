@@ -9,6 +9,9 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ScheduleIcon from '@material-ui/icons/Schedule';
@@ -28,7 +31,6 @@ import LocationIcon from '@material-ui/icons/LocationOn';
 // import BusinesssCenterIcon from '@material-ui/icons/BusinessCenter';
 // import BusinesssCenterIcon1 from '@material-ui/icons/BusinessCenterOutlined';
 // import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 //import GroupWorkIcon from '@material-ui/icons/GroupWork';
 //import BUSegIcon from '@material-ui/icons/AccountBalance';
 import Container from '@material-ui/core/Container';
@@ -36,7 +38,9 @@ import KeyIcon from '@material-ui/icons/VpnKey';
 import Grid from '@material-ui/core/Grid';
 import { Route, Link, BrowserRouter as Router, HashRouter } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
-import DataTable from './DataTable';
+import _FVP_All from './_FVP_All';
+import _FVP_My_Actions from './_FVP_My_Actions';
+import _FVP_My_Requests from './_FVP_My_Requests';
 //import BU from './BU';
 //import BUSegment from './BUSegment';
 //import SalesRegion from './SalesRegion';
@@ -156,6 +160,7 @@ export default function Main(props) {
   //const isNotAdmin = (props.userRoles.indexOf("Admin") == -1);//default true
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  //const [open, setOpen] = React.useState(true);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -222,41 +227,67 @@ export default function Main(props) {
                 to='/'
                 selected={selectedIndex === 0}
                 onClick={(event) => handleListItemClick(event, 0)}>
-                <Tooltip title="All Requests">
+                <Tooltip title="All FVPs">
                   <ListItemIcon className={classes.ListItem}>
                     <HomeIcon />
                   </ListItemIcon>
                 </Tooltip>
-                <ListItemText primary="All Requests"></ListItemText>
+                <ListItemText primary="All FVPs"></ListItemText>
+              </ListItem>
+
+              <ListItem
+                className={classes.ListItem}
+                button component={Link} to='/MyActions'
+                selected={selectedIndex === 1}
+                onClick={(event) => handleListItemClick(event, 1)}>
+                <Tooltip title={"My Actions"+" => "+"Go to Approval Center for further action"}>
+                  <ListItemIcon className={classes.ListItem}>
+                    <AccountBoxIcon />
+                  </ListItemIcon>
+                </Tooltip>
+                <ListItemText primary="My Actions"></ListItemText>
+              </ListItem>
+              
+              <ListItem
+                className={classes.ListItem}
+                button component={Link} to='/MyFVPs'
+                selected={selectedIndex === 2}
+                onClick={(event) => handleListItemClick(event, 2)}>
+                <Tooltip title="My FVPs">
+                  <ListItemIcon className={classes.ListItem}>
+                    <GroupWorkIcon />
+                  </ListItemIcon>
+                </Tooltip>
+                <ListItemText primary="My FVPs"></ListItemText>
               </ListItem>
 
               <ListItem
                 className={classes.ListItem}
                 button component={Link} to='/scheduled'
-                selected={selectedIndex === 1}
-                onClick={(event) => handleListItemClick(event, 1)}>
+                selected={selectedIndex === 3}
+                onClick={(event) => handleListItemClick(event, 3)}>
                 <Tooltip title="Scheduled">
                   <ListItemIcon className={classes.ListItem}>
                     <ScheduleIcon />
                   </ListItemIcon>
                 </Tooltip>
                 <ListItemText primary="Scheduled"></ListItemText>
-              </ListItem>
-              {/* <ListItem className={classes.ListItem} button component={Link} to='/Location'
-                selected={selectedIndex === 2}
-                onClick={(event) => handleListItemClick(event, 2)}>
+              </ListItem>      
+              {!props.IsAdmin ? null : <div>
+                <Divider />
+                <ListItem className={classes.ListItem} button component={Link} to='/Location'
+                selected={selectedIndex === 4}
+                onClick={(event) => handleListItemClick(event, 4)}>
                 <Tooltip title="Location">
                   <ListItemIcon className={classes.ListItem}>
                     <LocationIcon />
                   </ListItemIcon>
                 </Tooltip>
                 <ListItemText primary="Location"></ListItemText>
-              </ListItem> */}
-              {!props.IsAdmin ? null : <div>
-                <Divider />
+              </ListItem>
                 <ListItem className={classes.ListItem} button component={Link} to='/Keywords'
-                  selected={selectedIndex === 3}
-                  onClick={(event) => handleListItemClick(event, 3)}>
+                  selected={selectedIndex === 5}
+                  onClick={(event) => handleListItemClick(event, 5)}>
                   <Tooltip title="Keywords">
                     <ListItemIcon className={classes.ListItem}>
                       <KeyIcon />
@@ -265,8 +296,8 @@ export default function Main(props) {
                   <ListItemText primary="Keywords"></ListItemText>
                 </ListItem>
                 <ListItem className={classes.ListItem} button component={Link} to='/QualityAuditApprover'
-                  selected={selectedIndex === 4}
-                  onClick={(event) => handleListItemClick(event, 4)}>
+                  selected={selectedIndex === 6}
+                  onClick={(event) => handleListItemClick(event, 6)}>
                   <Tooltip title="Quality Audit Approver">
                     <ListItemIcon className={classes.ListItem}>
                       <HighQualityIcon />
@@ -275,8 +306,8 @@ export default function Main(props) {
                   <ListItemText primary="Quality Audit Approver"></ListItemText>
                 </ListItem>
                 <ListItem className={classes.ListItem} button component={Link} to='/Application'
-                  selected={selectedIndex === 5}
-                  onClick={(event) => handleListItemClick(event, 5)}>
+                  selected={selectedIndex === 7}
+                  onClick={(event) => handleListItemClick(event, 7)}>
                   <Tooltip title="Application">
                     <ListItemIcon className={classes.ListItem}>
                       <AppsIcon />
@@ -285,8 +316,8 @@ export default function Main(props) {
                   <ListItemText primary="Application"></ListItemText>
                 </ListItem>
                 <ListItem className={classes.ListItem} button component={Link} to='/SequentialNumber'
-                  selected={selectedIndex === 6}
-                  onClick={(event) => handleListItemClick(event, 6)}>
+                  selected={selectedIndex === 8}
+                  onClick={(event) => handleListItemClick(event, 8)}>
                   <Tooltip title="Sequential Number">
                     <ListItemIcon className={classes.ListItem}>
                       <TrendingUpIcon />
@@ -306,9 +337,11 @@ export default function Main(props) {
             <Grid container spacing={3}>
               <Grid item xs={12} md={12} lg={12}>
                 <Paper className={classes.paper}>
-                  <Route exact path='/' component={() => <DataTable {...props} />} />
+                  <Route exact path='/' component={() => <_FVP_All {...props} />} />
+                  <Route exact path='/MyActions' component={() => <_FVP_My_Actions {...props} />} />
+                  <Route exact path='/MyFVPs' component={() => <_FVP_My_Requests {...props} />} />
                   <Route exact path='/Scheduled' component={() => <Scheduled {...props} />} />
-                  {/* <Route exact path='/Location' component={() => <Location {...props} />} /> */}
+                  <Route exact path='/Location' component={() => <Location {...props} />} />
                   <Route exact path='/Keywords' component={() => <Keywords {...props} />} />
                   <Route exact path='/QualityAuditApprover' component={() => <QualityAuditApprover {...props} />} />
                   <Route exact path='/Application' component={() => <Application {...props} />} />

@@ -84,6 +84,7 @@ class LocationDataTable extends React.Component<IProps, IDataTableState>{
                 PMSession: '',
                 LocationApprover: '',
                 HasRestrictArea: '',
+             //   LocationApproverEmail: '',
             },
 
         };
@@ -200,6 +201,7 @@ class LocationDataTable extends React.Component<IProps, IDataTableState>{
                 PMSession: '',
                 LocationApprover: '',
                 HasRestrictArea: '',
+               // LocationApproverEmail: '',
             }
         });
     }
