@@ -74,6 +74,7 @@ class QualityAuditApproverDataTable extends React.Component<IProps, IDataTableSt
                 ID: null,
                 AuditApprover: '',
                 QualityAuditType: '',
+                AuditApproverEmail: '',
             },
 
         };
@@ -92,7 +93,7 @@ class QualityAuditApproverDataTable extends React.Component<IProps, IDataTableSt
                 render: (item: any) => {
                     return <Link style={{ color: 'orange' }}
                         onClick={() => {
-                            this.openForm("QualityAuditType", item['ID'], false);
+                            this.openForm("QualityAuditApprover", item['ID'], false);
                         }}
                     >{item['QualityAuditType']}</Link>;
                 }
@@ -116,7 +117,22 @@ class QualityAuditApproverDataTable extends React.Component<IProps, IDataTableSt
                     >{item['AuditApprover']}</Link>;
                 }
             },
-
+            {
+                name: 'AuditApproverEmail',
+                displayName: 'Audit Approver Email',
+                //linkPropertyName: 'c',
+                isResizable: true,
+                sorting: true,
+                minWidth: 80,
+                maxWidth: 150,
+                render: (item: any) => {
+                    return <Link style={{ color: 'orange' }}
+                        onClick={() => {
+                            this.openForm("QualityAuditApprover", item['ID'], false);
+                        }}
+                    >{item['AuditApproverEmail']}</Link>;
+                }
+            },
         ];
 
 
@@ -160,6 +176,7 @@ class QualityAuditApproverDataTable extends React.Component<IProps, IDataTableSt
                 ID: null,
                 AuditApprover: '',
                 QualityAuditType: '',
+                AuditApproverEmail: '',
             }
         });
     }

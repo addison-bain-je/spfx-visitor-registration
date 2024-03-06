@@ -24,7 +24,7 @@ export class fvpService {
                 // console.log("listID is " + l.Id);
                 result.listID = l.Id;
                 sp.web.lists.getByTitle(listname).items.getAll().then((items) => {
-                //sp.web.lists.getByTitle(listname).items.orderBy('ID',false).top(5000).get().then((items) => {
+                    //sp.web.lists.getByTitle(listname).items.orderBy('ID',false).top(5000).get().then((items) => {
                     items.map((item) => {
                         //console.log("FVP is "+ JSON.stringify(items,null,2));
                         result.FvpItem.push({
@@ -46,6 +46,12 @@ export class fvpService {
                             TourPlan: item.TourPlan,
                             VisitorDetails: item.VisitorDetails,
                             GenerateRemark: item.GenerateRemark,
+                            BUSegment: item.BUSegment,
+                            ApplicantEmail: item.ApplicantEmail,
+                            FVPVersion: item.FVPVersion,
+                            Product: item.Product,
+                            HostName: item.HostName,
+                            HostJobTitleDept: item.HostJobTitleDept,
                         });
                     });
                     resolve(result);
@@ -101,8 +107,13 @@ export class fvpService {
                 CurrentHandler: values.CurrentHandler,
                 Title: 'Done',
                 Product: values.Product,
+                ApplicantEmail: values.ApplicantEmail,
+                FVPVersion: values.FVPVersion,
+                ApplicantComments: values.ApplicantComments,
 
-            }).then((r) => { r.item.attachmentFiles.addMultiple(attFile); }).then(() => { resolve(rs); });
+            }).then((r) => {
+                r.item.attachmentFiles.addMultiple(attFile);
+            }).then(() => { resolve(rs); });
         });
     }
 
@@ -146,6 +157,9 @@ export class fvpService {
                 CurrentHandler: values.CurrentHandler,
                 Title: 'Done',
                 Product: values.Product,
+                ApplicantEmail: values.ApplicantEmail,
+                FVPVersion: values.FVPVersion,
+                ApplicantComments: values.ApplicantComments,
             }).then(() => { resolve(r); });
         });
 
@@ -199,6 +213,9 @@ export class fvpService {
                     CurrentHandler: values.CurrentHandler,
                     ApprovalHistory: values.ApprovalHistory,
                     Product: values.Product,
+                    ApplicantEmail: values.ApplicantEmail,
+                    FVPVersion: values.FVPVersion,
+                    ApplicantComments: values.ApplicantComments,
                 };
                 resolve(result);
             });

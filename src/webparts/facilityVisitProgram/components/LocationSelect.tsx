@@ -40,7 +40,15 @@ const viewFields: IViewField[] = [
         minWidth: 100,
         maxWidth: 250
     },
-
+    {
+        name: 'LocationApprover',
+        displayName: 'Location Approver',
+        //linkPropertyName: 'c',
+        isResizable: true,
+        sorting: true,
+        minWidth: 100,
+        maxWidth: 250
+    },
 ];
 
 export default function LocationSelect(props) {

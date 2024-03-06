@@ -20,6 +20,10 @@ const styles = (theme: Theme) =>
         }
     });
 
+export interface formState {
+   // LocationApproverEmail: string;
+}
+
 interface FormProps {
     context: WebPartContext;
     formInitialValues: LocationItem;
@@ -52,11 +56,14 @@ const validationSchema =
         HasRestrictArea: Yup.string().required("required"),
     });
 
-class LocationForm extends React.Component<FormProps> {
+class LocationForm extends React.Component<FormProps, formState> {
     private _service: service;
     private initialValues: LocationItem;
     constructor(props: FormProps) {
         super(props);
+        this.state = {
+          //  LocationApproverEmail: this.props.formInitialValues.LocationApproverEmail,
+        };
         this.initialValues = this.props.formInitialValues;
         this._service = new service(this.props.context);
     }
@@ -65,24 +72,26 @@ class LocationForm extends React.Component<FormProps> {
         //console.log(JSON.stringify(values, null, 2));
         setTimeout(() => {
             setSubmitting(false);
+          //  values.LocationApproverEmail = this.state.LocationApproverEmail;
+            var v = {
+                PlantArea: values.PlantArea,
+                AreaDescription: values.AreaDescription,
+                Department: values.Department,
+                LocationCode: values.LocationCode,
+                Block: values.Block,
+                Floor: values.Floor,
+                Plant: values.Plant,
+                NameinEnglish: values.NameinEnglish,
+                NameinChinese: values.NameinChinese,
+                ExtNo: values.ExtNo,
+                MobileNo: values.MobileNo,
+                AMSession: values.AMSession,
+                PMSession: values.PMSession,
+                LocationApprover: values.LocationApprover,
+                HasRestrictArea: values.HasRestrictArea,
+             //   LocationApproverEmail: values.LocationApproverEmail,
+            };
             if (values.ID != null) {
-                var v = {
-                    PlantArea: values.PlantArea,
-                    AreaDescription: values.AreaDescription,
-                    Department: values.Department,
-                    LocationCode: values.LocationCode,
-                    Block: values.Block,
-                    Floor: values.Floor,
-                    Plant: values.Plant,
-                    NameinEnglish: values.NameinEnglish,
-                    NameinChinese: values.NameinChinese,
-                    ExtNo: values.ExtNo,
-                    MobileNo: values.MobileNo,
-                    AMSession: values.AMSession,
-                    PMSession: values.PMSession,
-                    LocationApprover: values.LocationApprover,
-                    HasRestrictArea: values.HasRestrictArea,
-                };
                 this._service.updateItem("Location", v, Number(values.ID)).then(() => { this.props.refreshData(); });
             }
             else
@@ -254,12 +263,9 @@ class LocationForm extends React.Component<FormProps> {
                                                 : null}
                                             disabled={!this.props.editForm}
                                         />
-
-
                                     </Grid>
+
                                     <Grid item sm={12} xs={12}>
-
-
                                         <MuiFormControl
                                             variant="outlined"
                                             error={errors.LocationApprover != null}
@@ -277,11 +283,13 @@ class LocationForm extends React.Component<FormProps> {
                                                 ensureUser={true}
                                                 selectedItems={(items) => {
                                                     if (items.length != 0) {
-                                                        setFieldValue("LocationApprover", items[0].text);
-
+                                                        setFieldValue("LocationApprover", items[0].secondaryText.toString());
+                                                       // this.setState({ LocationApproverEmail: items[0].secondaryText.toString() });
                                                     }
-                                                    else
+                                                    else {
                                                         setFieldValue("LocationApprover", "");
+                                                      //  this.setState({ LocationApproverEmail: "" });
+                                                    }
                                                 }}
                                                 showHiddenInUI={true}
                                                 principalTypes={[PrincipalType.User]}

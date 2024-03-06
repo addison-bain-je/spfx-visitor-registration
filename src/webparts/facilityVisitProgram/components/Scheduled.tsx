@@ -74,7 +74,7 @@ class Scheduled extends React.Component<IProps, IState> {
     }
 
     public render() {
-        console.log(this.state.events);
+       // console.log(this.state.events);
         return (
             <>
                 <Calendar

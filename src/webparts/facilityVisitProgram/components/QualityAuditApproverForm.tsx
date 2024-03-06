@@ -20,6 +20,10 @@ const styles = (theme: Theme) =>
         }
     });
 
+export interface formState {
+   // AuditApproverEmail: string;
+}
+
 interface FormProps {
     context: WebPartContext;
     formInitialValues: QualityAuditApproverItem;
@@ -37,11 +41,14 @@ const validationSchema =
         QualityAuditType: Yup.string().required("required"),
     });
 
-class QualityAuditApproverForm extends React.Component<FormProps> {
+class QualityAuditApproverForm extends React.Component<FormProps, formState> {
     private _service: service;
     private initialValues: QualityAuditApproverItem;
     constructor(props: FormProps) {
         super(props);
+        this.state = {
+          //  AuditApproverEmail: this.props.formInitialValues.AuditApproverEmail,
+        };
         this.initialValues = this.props.formInitialValues;
         this._service = new service(this.props.context);
     }
@@ -50,11 +57,15 @@ class QualityAuditApproverForm extends React.Component<FormProps> {
         //console.log(JSON.stringify(values, null, 2));
         setTimeout(() => {
             setSubmitting(false);
+          //  values.AuditApproverEmail = this.state.AuditApproverEmail;
+          //  console.log("this.state.AuditApproverEmail is "+this.state.AuditApproverEmail);
+            var v = {
+                AuditApprover: values.AuditApprover,
+                QualityAuditType: values.QualityAuditType,
+             //   AuditApproverEmail: values.AuditApproverEmail,
+            };
+            console.log("V is "+JSON.stringify(v,null,2));
             if (values.ID != null) {
-                var v = {
-                    AuditApprover: values.AuditApprover,
-                    QualityAuditType: values.QualityAuditType,
-                };
                 this._service.updateItem("QualityAuditApprover", v, Number(values.ID)).then(() => { this.props.refreshData(); });
             }
             else
@@ -124,11 +135,13 @@ class QualityAuditApproverForm extends React.Component<FormProps> {
                                                 ensureUser={true}
                                                 selectedItems={(items) => {
                                                     if (items.length != 0) {
-                                                        setFieldValue("AuditApprover", items[0].text);
-
+                                                        setFieldValue("AuditApprover", items[0].secondaryText.toString());
+                                                     //   this.setState({ AuditApproverEmail: items[0].secondaryText.toString() });
                                                     }
-                                                    else
+                                                    else {
                                                         setFieldValue("AuditApprover", "");
+                                                     //   this.setState({ AuditApproverEmail: "" });
+                                                    }
                                                 }}
                                                 showHiddenInUI={true}
                                                 principalTypes={[PrincipalType.User]}
@@ -137,7 +150,6 @@ class QualityAuditApproverForm extends React.Component<FormProps> {
                                             />
                                             <FormHelperText>{errors.AuditApprover}</FormHelperText>
                                         </MuiFormControl>
-
 
                                     </Grid>
                                 </Grid>

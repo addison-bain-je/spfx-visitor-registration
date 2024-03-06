@@ -160,7 +160,7 @@ export default function TourPlan_Read(props) {
                                 <TableBody>
                                     {(state.data.length > 0 ? state.data.sort((a, b) => (new Date(a.Date)).getTime() - (new Date(b.Date)).getTime()) : state.data).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                                         <TableRow>
-                                            <TableCell align="left">{dateformat(new Date(row.Date), 'MM/dd/yyyy')}</TableCell>
+                                            <TableCell align="left">{dateformat(new Date(row.Date), 'yyyy/MM/dd')}</TableCell>
                                             <TableCell align="left">{row.sTime+"--"+row.eTime}</TableCell>
                                             <TableCell align="left">{row.VisitArea}</TableCell>
                                             <TableCell align="left">{row.PlantCode}</TableCell>

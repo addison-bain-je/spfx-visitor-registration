@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Yup from 'yup';
 import { fvpFormProps } from './fvpFormProps';
-import { Grid, TextField, Paper, AppBar, Toolbar, IconButton, Tooltip, InputLabel, styled, FormLabel, FormControlLabel } from '@material-ui/core';
+import { Grid, TextField, Paper, AppBar, Toolbar, IconButton, Tooltip, InputLabel, styled, FormLabel, FormControlLabel, Slide, Divider } from '@material-ui/core';
 import Controls from './controls/Controls';
 import PeopleOutlineTwoToneIcon from '@material-ui/icons/PeopleOutlineTwoTone';
 import PageHeader from './PageHeader';
@@ -234,6 +234,28 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
         this.setState({ openAlert: false });
     }
 
+    private FilterKeywords_BUSegument(FieldName: string): SelectOptionItem[] {
+        //private FilterKeywords(FieldName: string): SelectSpecialOptionItem[] {
+        var v: SelectOptionItem[] = [];
+        //var v: SelectSpecialOptionItem[] = [];
+        var kItem: KeywordItem[] = [];
+        if (FieldName != '') {
+            kItem = this.props.keywords.filter(obj => obj.Key == FieldName);
+            if (kItem.length > 0) {
+                var arr: string[] = (JSON.parse(kItem[0].Values)[0]["Value"]).split(';');
+                if (arr.length > 0) {
+                    arr.map((item: any) => {
+                        v.push({
+                            id: item,
+                            title: item,
+                        });
+                    });
+                }
+            }
+        }
+        return (v);
+    }
+
     private FilterKeywords(FieldName: string): SelectOptionItem[] {
         //private FilterKeywords(FieldName: string): SelectSpecialOptionItem[] {
         var v: SelectOptionItem[] = [];
@@ -281,7 +303,10 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
         if (confirm("Are you sure to save?")) {
             //formik.values.MarketingCoordinator = this.FilterKeywords("Marketing Coordinator");
             formik.values.Action = "save";
-            formik.values.CurrentHandler = this.props.context.pageContext.user.email;
+            if (formik.values.Status == "Draft") {
+                formik.values.CurrentHandler = this.props.context.pageContext.user.email;
+            }
+
             //console.log("Saved values is " + JSON.stringify(formik.values, null, 2));
             setTimeout(() => {
                 formik.setSubmitting(false);
@@ -303,7 +328,7 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
             formik.values.Action = "cancel";
             formik.values.Status = "Cancelled";
             formik.values.CurrentHandler = "";
-         //   console.log(JSON.stringify(formik.values, null, 2));
+            //   console.log(JSON.stringify(formik.values, null, 2));
             setTimeout(() => {
                 formik.setSubmitting(false);
                 this._fvpservice.updateItem("FVP", formik.values).then(() => { this.props.refreshData(); });
@@ -321,7 +346,7 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
             formik.values.Action = "onapprove";
             formik.values.Status = "Ready";
             formik.values.CurrentHandler = "";
-           // console.log(JSON.stringify(formik.values, null, 2));
+            // console.log(JSON.stringify(formik.values, null, 2));
             setTimeout(() => {
                 formik.setSubmitting(false);
                 this._fvpservice.updateItem("FVP", formik.values).then(() => { this.props.refreshData(); });
@@ -588,7 +613,8 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                                             setFieldValue={fieldProps.form.setFieldValue}
                                                                             ////dname="BUDescription"
                                                                             fieldValue={initializeValues(fieldProps.field.value)}
-                                                                            options={this.FilterKeywords('Business Unit')}
+                                                                            options={this.FilterKeywords('Business Unit').sort((a, b) =>
+                                                                                a.id.localeCompare(b.id))}
                                                                             //onChange={formik.handleChange}
                                                                             error={formik.errors.BU && formik.touched.BU
                                                                                 ? formik.errors.BU
@@ -620,32 +646,47 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                             /> */}
                                             <Tooltip title={formik.values.BUSegment ? JSON.parse(formik.values.BUSegment).join(',') : "Empty"} arrow placement="right">
                                                 <div>
-                                                    <FormControlLabel
-                                                        disabled={!this.props.editForm}
-                                                        control={<Field
-                                                            name="BUSegment">
-                                                            {(fieldProps) => {
-                                                                return (
-                                                                    <Controls.MultipleSelect
-                                                                        fieldName="BUSegment"
-                                                                        //label="BU Segment"
-                                                                        setFieldValue={fieldProps.form.setFieldValue}
-                                                                        ////dname="BUSegmentDescription"
-                                                                        fieldValue={initializeValues(fieldProps.field.value)}
-                                                                        options={this.FilterKeywords('BU Segment')}
-                                                                        //onChange={formik.handleChange}
-                                                                        error={formik.errors.BUSegment && formik.touched.BUSegment
-                                                                            ? formik.errors.BUSegment
-                                                                            : null}
-                                                                        disabled={!this.props.editForm}
-                                                                    />
-                                                                );
-                                                            }}
-                                                        </Field>}
-                                                        labelPlacement="start"
-                                                        label={"BU Segment"}
-                                                        className={classes.controlLabel}
-                                                    />
+                                                    {(formik.values.Status == "Draft") ?
+                                                        <FormControlLabel
+                                                            disabled={!this.props.editForm}
+                                                            control={<Field
+                                                                name="BUSegment">
+                                                                {(fieldProps) => {
+                                                                    return (
+                                                                        <Controls.MultipleSelect
+                                                                            fieldName="BUSegment"
+                                                                            //label="BU Segment"
+                                                                            setFieldValue={fieldProps.form.setFieldValue}
+                                                                            ////dname="BUSegmentDescription"
+                                                                            fieldValue={initializeValues(fieldProps.field.value)}
+                                                                            //options={this.FilterKeywords_BUSegument('BU Segment')}
+                                                                            options={this.FilterKeywords('BU Segment').sort((a, b) => a.id.localeCompare(b.id))}
+                                                                            //onChange={formik.handleChange}
+                                                                            error={formik.errors.BUSegment && formik.touched.BUSegment
+                                                                                ? formik.errors.BUSegment
+                                                                                : null}
+                                                                            disabled={!this.props.editForm}
+                                                                        />
+                                                                    );
+                                                                }}
+                                                            </Field>}
+                                                            labelPlacement="start"
+                                                            label={"BU Segment"}
+                                                            className={classes.controlLabel}
+                                                        /> :
+                                                        <FormControlLabel
+                                                            control={<Field
+                                                                as={TextField}
+                                                                variant="outlined"
+                                                                //label="Status"
+                                                                name="BUSegment"
+                                                                value={JSON.parse(formik.values.BUSegment).join(',')}
+                                                                disabled={true}
+                                                            />}
+                                                            labelPlacement="start"
+                                                            label={"BU Segment"}
+                                                            className={classes.controlLabel}
+                                                        />}
                                                 </div>
                                             </Tooltip>
 
@@ -656,7 +697,7 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                         name="VisitorType"
                                                         //label="Visitor Type"
                                                         value={formik.values.VisitorType}
-                                                        options={this.FilterKeywords('Visitor Type')}
+                                                        options={this.FilterKeywords('Visitor Type').sort((a, b) => a.id.localeCompare(b.id))}
                                                         onChange={(e) => { formik.handleChange(e); formik.setFieldValue("VisitingPurpose", ""); }}
                                                         setFieldValue={formik.setFieldValue}
                                                         //dname="VisitorTypeDescription"
@@ -675,7 +716,7 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                         name="VisitingPurpose"
                                                         //label="Visiting Purpose"
                                                         value={formik.values.VisitingPurpose}
-                                                        options={this.FilterKeywords('Visiting Purpose')}
+                                                        options={this.FilterKeywords('Visiting Purpose').sort((a, b) => a.id.localeCompare(b.id))}
                                                         onChange={formik.handleChange}
                                                         setFieldValue={formik.setFieldValue}
                                                         //dname="VisitingPurposeDescription"
@@ -820,7 +861,7 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                                         setFieldValue={fieldProps.form.setFieldValue}
                                                                         ////dname="SalesRegionDescription"
                                                                         fieldValue={initializeValues(fieldProps.field.value)}
-                                                                        options={this.FilterKeywords('Sales Region')}
+                                                                        options={this.FilterKeywords('Sales Region').sort((a, b) => a.id.localeCompare(b.id))}
                                                                         //onChange={formik.handleChange}
                                                                         error={formik.errors.SalesRegion && formik.touched.SalesRegion
                                                                             ? formik.errors.SalesRegion
@@ -903,7 +944,7 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                     name="FinalApprover"
                                                     value={formik.values.FinalApprover}
                                                     //options={this.FilterFinalApproverOptions(formik.values.VisitorType)}
-                                                    options={this.FilterKeywords("Final Approver")}
+                                                    options={this.FilterKeywords("Final Approver").sort((a, b) => a.id.localeCompare(b.id))}
                                                     onChange={formik.handleChange}
                                                     setFieldValue={formik.setFieldValue}
                                                     //dname="FinalApproverDescription"
@@ -989,9 +1030,25 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                     );
                                             }}
                                         </Field>
+                                        <br />
+                                        <Field
+                                            as={TextField}
+                                            variant="outlined"
+                                            label="Comments"
+                                            name="ApplicantComments"
+                                            size="small"
+                                            multiline
+                                            rows={4}
+                                            fullWidth
+                                            error={
+                                                formik.errors.ApplicantComments && formik.touched.ApplicantComments
+                                                    ? formik.errors.ApplicantComments
+                                                    : null}
+                                            helperText={formik.errors.ApplicantComments}
+                                            disabled={!this.props.editForm}
+                                        />
                                     </Grid>
                                 </Grid>
-
                                 <Controls.DialogMultipleSelect
                                     options={this.state.options}
                                     title={this.state.title}
@@ -1004,108 +1061,53 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
 
                                 <Controls.AlertDialogSlide open={this.state.openAlert} HandleOK={this.handleOK} message="Visiting date should not be less than 3 days from the day of submision.You can only save it as draft and get email approval from your SVP." />
                             </form>)}
-
                     </Formik>
+                    <br />
                     <Grid item>
-                        {!(this.initialValues.ID == null) ? '' :
-                            <div className={classes.root}>
-                                <input className={classes.input} id="file"
-                                    multiple={true}
-                                    type="file"
-                                    onChange={this.addFile.bind(this)} required />
-                                <label htmlFor="file">
-                                    <div>
-                                        <Button variant="contained" component="span"
-                                            className={classes.button}
-                                            startIcon={<CloudUploadIcon />}>
-                                            Upload</Button>
-                                        <span style={{ fontSize: 14 }}>You may upload your agenda, hotel and logistics arrangement, tour plan, Health Declaration Form, and other related information, preferrably in WORD, PPT, PDF, or JPEG format.</span>
-                                    </div>
-                                </label>
-                                <p>Selected Attachments:</p>
-                                <div id="fileList"></div>
-                            </div>
-                        }
-                        {(this.initialValues.ID == null) ? '' :
-                            <div>
-                                <ListItemAttachments listId={this.props.listID}
-                                    itemId={this.initialValues.ID}
-                                    context={this.props.context}
-                                    disabled={!this.props.editForm}
-                                    openAttachmentsInNewWindow={true}
-                                />
-                            </div>
-                        }
-                    </Grid>
-                    <Grid item xs={12} sm={12}>
-                        <MuiTypography>
-                            <pre style={{ fontFamily: 'inherit' }}>
-                                {this.initialValues.ApprovalHistory}
-                            </pre>
-                        </MuiTypography>
+                        <Divider />
+                        <Grid item xs={12} sm={12}>
+                            <MuiTypography>
+                                <pre style={{ fontFamily: 'inherit' }}>
+                                    {this.initialValues.ApprovalHistory}
+                                </pre>
+                            </MuiTypography>
+                        </Grid>
+                        <Divider />
+                        <Paper elevation={3}>
+                            {!(this.initialValues.ID == null) ? '' :
+                                <div className={classes.root}>
+                                    <input className={classes.input} id="file"
+                                        multiple={true}
+                                        type="file"
+                                        onChange={this.addFile.bind(this)} required />
+                                    <label htmlFor="file">
+                                        <div>
+                                            <Button variant="contained" component="span"
+                                                className={classes.button}
+                                                startIcon={<CloudUploadIcon />}>
+                                                Upload</Button>
+                                            <span style={{ fontSize: 14 }}>You may upload your agenda, hotel and logistics arrangement, tour plan, Health Declaration Form, and other related information, preferrably in WORD, PPT, PDF, or JPEG format.</span>
+                                        </div>
+                                    </label>
+                                    <p>Selected Attachments:</p>
+                                    <div id="fileList"></div>
+                                </div>
+                            }
+                            {(this.initialValues.ID == null) ? '' :
+                                <div>
+                                    <ListItemAttachments listId={this.props.listID}
+                                        itemId={this.initialValues.ID}
+                                        context={this.props.context}
+                                        disabled={!this.props.editForm}
+                                        openAttachmentsInNewWindow={true}
+                                    />
+                                </div>
+                            }
+                        </Paper>
                     </Grid>
                 </Paper>
-
-
             </>
         );
     }
 }
 export default withStyles(styles)(FvpForm);
-
-
-/*
-<IconButton edge="start"
-                                            color="inherit"
-                                            onClick={this.props.closeForm}
-                                            aria-label="close">
-                                            <CloseIcon /> </IconButton>
-*/
-
-
-/*
-<Button
-                                            autoFocus
-                                            color="inherit"
-                                            disabled
-                                            //disabled={!(this.props.userRoles.indexOf("Admin") != -1 && formik.values.Status.includes("Draft") && !formik.isSubmitting)}
-                                            onClick={() => { this.onApprove(formik); }}
-                                        >Approve</Button>
-*/
-
-
-/*
-<div>
-                                            <Field
-                                                as={TextField}
-                                                variant="standard"
-                                                label="Motor Series"
-                                                name="MotorSeries"
-                                                error={formik.errors.MotorSeries && formik.touched.MotorSeries
-                                                    ? formik.errors.MotorSeries
-                                                    : null}
-                                                helperText={formik.errors.MotorSeries}
-                                                disabled={!this.props.editForm}
-                                            /> <Tooltip title='Motor Series Details'>
-                                                <IconButton disabled={!this.props.editForm}>
-                                                    <Menu fontSize="small" onClick={() => { this.setOpen("MotorSeries", this.props.MotorSeriesOptions, "Motor Series"); }} />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </div>
-*/
-
-/*
-<Controls.Select
-                                            name="MarketingCoordinator"
-                                            label="Marketing Coordinator"
-                                            value={formik.values.MarketingCoordinator}
-                                            options={this.props.MarketingCoordinatorOptions}
-                                            onChange={formik.handleChange}
-                                            setFieldValue={formik.setFieldValue}
-                                            dname="MarketingCoordinatorDescription"
-                                            error={formik.errors.MarketingCoordinator && formik.touched.MarketingCoordinator
-                                                ? formik.errors.MarketingCoordinator
-                                                : null}
-                                            disabled={!this.props.editForm}
-                                        />
-*/

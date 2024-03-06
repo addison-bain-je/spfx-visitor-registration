@@ -44,7 +44,9 @@
     "react-dom": "16.8.5",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "yup": "^0.29.3"
+    "yup": "^0.29.3",
+    "file-saver": "^2.0.5",
+    "xlsx": "^0.17.0"
   },
   "devDependencies": {
     "@types/react": "16.8.8",
