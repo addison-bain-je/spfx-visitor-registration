@@ -26,6 +26,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane, faEdit, faRedoAlt, faSave, faBan, faTimes } from '@fortawesome/free-solid-svg-icons';
 import orange from '@material-ui/core/colors/orange';
 import green from '@material-ui/core/colors/green';
+import { trimStart } from '@microsoft/sp-lodash-subset';
 const submitIcon = <FontAwesomeIcon icon={faPaperPlane} />;
 const editIcon = <FontAwesomeIcon icon={faEdit} />;
 const resetIcon = <FontAwesomeIcon icon={faRedoAlt} />;
@@ -205,6 +206,7 @@ export interface formState {
     fieldName: string;
     title: string;
     openAlert: boolean;
+    editByApplicant: boolean;
 }
 
 class FvpForm extends React.Component<fvpFormProps, formState> {
@@ -220,6 +222,7 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
             fieldName: '',
             title: '',
             openAlert: false,
+            editByApplicant: true,
         };
         this.initialValues = this.props.formInitialValues;
         this._fvpservice = new fvpService(this.props.context, this.props.context.pageContext);
@@ -233,7 +236,9 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
     private handleOK = () => {
         this.setState({ openAlert: false });
     }
-
+    private editByApplicant = () => {
+        this.setState({ editByApplicant: false });
+    }
     private FilterKeywords_BUSegument(FieldName: string): SelectOptionItem[] {
         //private FilterKeywords(FieldName: string): SelectSpecialOptionItem[] {
         var v: SelectOptionItem[] = [];
@@ -489,6 +494,28 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                         >Cancel</Button> */}
                                         {!(this.props.context.pageContext.user.displayName == formik.values.Applicant) ? null :
                                             <div>
+                                                {formik.values.Status == "Draft" ? null :
+                                                    <>
+                                                        <Button
+                                                            autoFocus
+                                                            size="small"
+                                                            className={classes.toolbarButton}
+                                                            startIcon={saveIcon}
+                                                            color="inherit"
+                                                            disabled={this.state.editByApplicant}
+                                                            onClick={() => { formik.setSubmitting(true); this.onSave(formik); }}
+                                                        >Save by Applicant</Button>
+                                                        <Button
+                                                            autoFocus
+                                                            className={classes.toolbarButton}
+                                                            size="small"
+                                                            startIcon={editIcon}
+                                                            color="inherit"
+                                                            disabled={!this.state.editByApplicant}
+                                                            onClick={this.editByApplicant}
+                                                        >Edit By Applicant</Button>
+                                                    </>
+                                                }
                                                 {formik.values.Status == "Cancelled" ? null :
                                                     <Button
                                                         autoFocus
@@ -1045,7 +1072,7 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                                                     ? formik.errors.ApplicantComments
                                                     : null}
                                             helperText={formik.errors.ApplicantComments}
-                                            disabled={!this.props.editForm}
+                                            disabled={!(this.props.editForm || !this.state.editByApplicant)}
                                         />
                                     </Grid>
                                 </Grid>
@@ -1065,13 +1092,25 @@ class FvpForm extends React.Component<fvpFormProps, formState> {
                     <br />
                     <Grid item>
                         <Divider />
-                        <Grid item xs={12} sm={12}>
+                        {/* <Grid item xs={12} sm={12}>
                             <MuiTypography>
                                 <pre style={{ fontFamily: 'inherit' }}>
                                     {this.initialValues.ApprovalHistory}
                                 </pre>
                             </MuiTypography>
-                        </Grid>
+                        </Grid> */}
+                        {!(this.initialValues.ApprovalHistory) ? null :
+                                <TextField
+                                    variant="outlined"
+                                    label=""
+                                    name="ApprovalHistory"
+                                    multiline
+                                    fullWidth
+                                    rowsMax={18}
+                                    disabled={true}
+                                    value={(this.initialValues.ApprovalHistory) ? this.initialValues.ApprovalHistory : null}
+                                />
+                            }
                         <Divider />
                         <Paper elevation={3}>
                             {!(this.initialValues.ID == null) ? '' :

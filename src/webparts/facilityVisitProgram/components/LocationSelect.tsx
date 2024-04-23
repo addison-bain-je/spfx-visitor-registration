@@ -9,7 +9,7 @@ const viewFields: IViewField[] = [
         isResizable: true,
         sorting: true,
         minWidth: 200,
-        maxWidth: 250
+        maxWidth: 500
     },
     {
         name: 'PlantArea',
@@ -17,18 +17,25 @@ const viewFields: IViewField[] = [
         //linkPropertyName: 'c',
         isResizable: true,
         sorting: true,
-        minWidth: 300,
+        minWidth: 200,
         maxWidth: 500
     },
-
-
     {
         name: 'AreaDescription',
         displayName: 'Area Description',
         //linkPropertyName: 'c',
         isResizable: true,
         sorting: true,
-        minWidth: 400,
+        minWidth: 200,
+        maxWidth: 500
+    },
+    {
+        name: 'NameinEnglish',
+        displayName: 'Tour Guide',
+        //linkPropertyName: 'c',
+        isResizable: true,
+        sorting: true,
+        minWidth: 150,
         maxWidth: 500
     },
     {
@@ -37,8 +44,8 @@ const viewFields: IViewField[] = [
         //linkPropertyName: 'c',
         isResizable: true,
         sorting: true,
-        minWidth: 100,
-        maxWidth: 250
+        minWidth: 150,
+        maxWidth: 500
     },
     {
         name: 'LocationApprover',
@@ -46,8 +53,8 @@ const viewFields: IViewField[] = [
         //linkPropertyName: 'c',
         isResizable: true,
         sorting: true,
-        minWidth: 100,
-        maxWidth: 250
+        minWidth: 150,
+        maxWidth: 500
     },
 ];
 

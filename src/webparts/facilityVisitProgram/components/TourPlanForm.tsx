@@ -300,7 +300,7 @@ export default function TourPlanForm(props) {
                                     open={showDialog}
                                     TransitionComponent={Transition}
                                     fullWidth={true}
-                                    maxWidth={"lg"}
+                                    maxWidth={'lg'}
 
                                 >
                                     <DialogTitle>Please select a location:</DialogTitle>

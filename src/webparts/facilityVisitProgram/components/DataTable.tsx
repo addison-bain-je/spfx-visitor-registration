@@ -451,11 +451,15 @@ class DataTable extends React.Component<IProps, IDataTableState>{
 
   private getApplicationOptions(listName: string, selectFields: string[]): void {
     const result: string[] = [];
+    let sortedResult: string[] = [];
     this._service.filterItems(listName, selectFields).then((items: any[]) => {
       items.map((item) => {
         result.push(item.Name);
       });
-      this.setState({ ApplicationOptions: result });
+      sortedResult = result.sort((a, b) => {
+        return (a + '').localeCompare(b + '');
+      });
+      this.setState({ ApplicationOptions: sortedResult });
     });
   }
 

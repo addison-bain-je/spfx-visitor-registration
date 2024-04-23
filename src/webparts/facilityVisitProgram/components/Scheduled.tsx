@@ -7,6 +7,12 @@ import { Grid, Button, Typography } from '@material-ui/core';
 import Tooltip, { TooltipProps } from '@material-ui/core/Tooltip';
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
 import './styles.css';
+import dateformat from 'date-fns/format';
+// moment.locale("en-GB");
+// Calendar.momentLocalizer(moment);
+
+
+
 const localizer = momentLocalizer(moment);
 const HtmlTooltip = withStyles((theme: Theme) => ({
     tooltip: {
@@ -26,24 +32,33 @@ interface IProps {
 interface IState {
     events: any[];
     location: string;
+    showModal: boolean;
 }
 class Scheduled extends React.Component<IProps, IState> {
     private _fvpService: fvpService;
     constructor(props: IProps, state: IState) {
         super(props);
-        this.state = { events: [], location: '' };
+        this.state = { events: [], location: '', showModal: false };
         this._fvpService = new fvpService(props.context, props.context.pageContext);
     }
 
     private getTourPlans(listName: string, selectFields: string[], keyword: string): void {
         const result = [];
         this._fvpService.filterItems(listName, selectFields, keyword).then((items: any[]) => {
-            items.map((item) => {
-                JSON.parse(item.TourPlan).forEach(element => {
-                    result.push({ title: element.PlantCode + ", " + element.VisitArea + ", " + element.Floor + "F/" + element.Block + "B", start: new Date(element.Date + ' ' + element.sTime), end: new Date(element.Date + ' ' + element.eTime), resource: element });
+            let sortedInput = items.slice().sort((a, b) => b.ID - a.ID);
+            sortedInput.map((item) => {
+                JSON.parse(item.TourPlan).map(element => {
+                    const localizedStartDate = dateformat(new Date(element.Date + ' ' + element.sTime), 'MM/dd/yyyy HH:mm').toString();
+                    const localizedSEndDate = dateformat(new Date(element.Date + ' ' + element.eTime), 'MM/dd/yyyy HH:mm').toString();
+                    result.push({
+                        title: element.PlantCode + ", " + element.VisitArea + ", " + element.Floor + "F/" + element.Block + "B",
+                        start: new Date(Date.parse(localizedStartDate)), end: new Date(Date.parse(localizedSEndDate)), resource: element
+                    });
+                    //result.push({ title: element.PlantCode + ", " + element.VisitArea + ", " + element.Floor + "F/" + element.Block + "B", start: new Date(element.Date + ' ' + element.sTime), end: new Date(element.Date + ' ' + element.eTime), resource: element });
                 });
 
             });
+            console.log("schedule " + JSON.stringify(result, null, 2));
             this.setState({ events: result });
         });
     }
@@ -74,7 +89,7 @@ class Scheduled extends React.Component<IProps, IState> {
     }
 
     public render() {
-       // console.log(this.state.events);
+        // console.log(this.state.events);
         return (
             <>
                 <Calendar
@@ -83,6 +98,7 @@ class Scheduled extends React.Component<IProps, IState> {
                     defaultView={Views.work_week}
                     scrollToTime={new Date(2020, 1, 1, 6)}
                     defaultDate={moment().startOf('day').toDate()}
+                    //defaultDate={moment().toDate()}
                     //onSelectEvent={event => alert(event.title)}
                     titleAccessor={event => event.title}
                     tooltipAccessor={null}
@@ -91,8 +107,8 @@ class Scheduled extends React.Component<IProps, IState> {
                     components={{
                         event: this.Event,
                     }}
-                    views={['month', 'week', 'day', 'agenda']
-                    }
+                    //onShowMore={(events, date) => this.setState({ showModal: true, events })}
+                    views={['month', 'week', 'day', 'agenda']}
                 />
             </>
         );
