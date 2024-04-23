@@ -407,7 +407,7 @@ class _FVP_My_Actions extends React.Component<IProps, IDataTableState>{
             items.map((item) => {
                 result.push(item.Name);
             });
-            this.setState({ ApplicationOptions: result });
+            this.setState({ ApplicationOptions: result.sort() });
         });
     }
 
@@ -502,17 +502,18 @@ class _FVP_My_Actions extends React.Component<IProps, IDataTableState>{
                 initializeValues(item.TourPlan).map(subItem => {
                     obj = {
                         "FVP#": item.RequestNo,
-                        "Status": item.Status,
+                       // "Status": item.Status,
                         "BU Segment": (item.BUSegment) ? JSON.parse(item['BUSegment']).join(',') : '',
                         "Customer": (JSON.parse(item.VisitorDetails)).map((item1) => { return item1.CompanyName; }).filter((value, index, array) => array.indexOf(value) === index).join(","),
                         "Visitor Name": (JSON.parse(item.VisitorDetails)).map((item2) => { return item2.VisitorName; }).join(","),
                         "Visitor Title": (JSON.parse(item.VisitorDetails)).map((item3) => { return item3.JobTitle; }).join(","),
                         "JE Coordinator": item.HostName,
-                        "JE Dept.": item.HostJobTitleDept,
+                        "Job Title/Dept.": item.HostJobTitleDept,
                         "Date": dateformat(new Date(subItem.Date), 'yyyy/MM/dd'),
                         "Time": subItem.sTime + " - " + subItem.eTime,
                         "Plant": subItem.PlantCode,
                         "Location": subItem.VisitArea,
+                        "Visit purpose": item.VisitingPurpose,
                         "Visit purpose details": item.GenerateRemark,
                         "Product": item.Product,
                         "Application or Program": item.Application,
@@ -544,17 +545,18 @@ class _FVP_My_Actions extends React.Component<IProps, IDataTableState>{
                     initializeValues(item.TourPlan).map(subItem => {
                         obj = {
                             "FVP#": item.RequestNo,
-                            "Status": item.Status,
+                           // "Status": item.Status,
                             "BU Segment": (item.BUSegment) ? JSON.parse(item['BUSegment']).join(',') : '',
                             "Customer": (JSON.parse(item.VisitorDetails)).map((item1) => { return item1.CompanyName; }).filter((value, index, array) => array.indexOf(value) === index).join(","),
                             "Visitor Name": (JSON.parse(item.VisitorDetails)).map((item2) => { return item2.VisitorName; }).join(","),
                             "Visitor Title": (JSON.parse(item.VisitorDetails)).map((item3) => { return item3.JobTitle; }).join(","),
                             "JE Coordinator": item.HostName,
-                            "JE Dept.": item.HostJobTitleDept,
+                            "Job Title/Dept.": item.HostJobTitleDept,
                             "Date": dateformat(new Date(subItem.Date), 'yyyy/MM/dd'),
                             "Time": subItem.sTime + " - " + subItem.eTime,
                             "Plant": subItem.PlantCode,
                             "Location": subItem.VisitArea,
+                            "Visit purpose": item.VisitingPurpose,
                             "Visit purpose details": item.GenerateRemark,
                             "Product": item.Product,
                             "Application or Program": item.Application,

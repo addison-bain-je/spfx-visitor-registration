@@ -242,7 +242,7 @@ export class fvpService {
 
         return new Promise<any[]>(async (resolve, reject) => {
             sp.web.lists.getByTitle(listname).items.select(selectFields.toString())
-                .filter(`substringof('${keyword}',Status)`).get().then((items) => {
+                .filter(`substringof('${keyword}',Status)`).getAll().then((items) => {
                     resolve(items);
                 });
         });
